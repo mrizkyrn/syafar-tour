@@ -1,5 +1,5 @@
 import { FaStar, FaPlay } from 'react-icons/fa';
-import Container from '../Container';
+import Container from '@/components/Container';
 
 const HeroSection: React.FC = () => {
   return (

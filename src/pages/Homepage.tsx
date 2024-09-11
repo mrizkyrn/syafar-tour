@@ -1,8 +1,8 @@
-import Footer from '../components/Footer';
-import HeroSection from '../components/home/HeroSection';
-import ProductSection from '../components/home/ProductSection';
-import ProfitSection from '../components/home/ProfitSection';
-import PromoSection from '../components/home/PromoSection';
+import Footer from '@/components/Footer';
+import HeroSection from '@/components/home/HeroSection';
+import ProductSection from '@/components/home/ProductSection';
+import ProfitSection from '@/components/home/ProfitSection';
+import PromoSection from '@/components/home/PromoSection';
 
 const Homepage = () => {
   return (

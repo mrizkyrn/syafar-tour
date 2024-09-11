@@ -1,5 +1,5 @@
 import React from 'react';
-import Container from './Container';
+import Container from '@/components/Container';
 import { FaFacebookSquare, FaInstagram, FaTwitter, FaYoutube, FaTelegram } from 'react-icons/fa';
 
 const Footer: React.FC = () => {

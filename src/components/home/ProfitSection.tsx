@@ -1,5 +1,5 @@
-import Container from '../Container';
-import HeadingSection from '../HeadingSection';
+import Container from '@/components/Container';
+import HeadingSection from '@/components/HeadingSection';
 
 const ProfitSection: React.FC = () => {
   return (

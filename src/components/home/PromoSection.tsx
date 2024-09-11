@@ -1,7 +1,7 @@
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
-import Container from '../Container';
-import HeadingSection from '../HeadingSection';
+import Container from '@/components/Container';
+import HeadingSection from '@/components/HeadingSection';
 
 import 'swiper/css';
 
