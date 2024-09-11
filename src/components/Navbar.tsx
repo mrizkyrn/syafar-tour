@@ -1,64 +1,54 @@
-import { FaSearch } from 'react-icons/fa';
 import { NavLink } from 'react-router-dom';
+import Logo from '@/components/Logo';
+import MainButton from './MainButton';
+
+interface NavbarItem {
+  name: string;
+  to: string;
+}
+
+const navItems: NavbarItem[] = [
+  { name: 'Home', to: '/' },
+  { name: 'Tentang', to: '/tentang' },
+  { name: 'Produk', to: '/produk' },
+  { name: 'Paket', to: '/paket' },
+  { name: 'Faq', to: '/faq' },
+];
 
 const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-10">
-      {/* Navbar Upper */}
-      <div className="py-3 px-4 md:px-8 bg-white border-b border-gray-200">
-        <div className="container mx-auto max-w-6xl">
+      <div className="py-4 px-4 md:px-8 bg-white border-b border-gray-200">
+        <div className="container mx-auto max-w-7xl">
           <div className="w-full flex items-center justify-between gap-4">
             {/* Logo */}
-            <span className="text-sm sm:text-xl font-bold text-orange-600">UMROH</span>
+            <Logo className="w-52" />
 
-            <div className="flex items-center space-x-4">
-              {/* Search */}
-              <div className="relative w-full md:w-[500px]">
-                <FaSearch className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Cari destinasi atau tour and package"
-                  className="w-full text-sm sm:text-base pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                />
-              </div>
-
-              {/* Login Button */}
-              <button className="bg-blue-900 text-white text-sm sm:text-base py-2 px-6 rounded-full">Login</button>
+            {/* Navigation */}
+            <div className="flex items-center gap-11">
+              {navItems.map((item, index) => (
+                <NavLink
+                  key={index}
+                  to={item.to}
+                  className={({ isActive }) =>
+                    `text-xs sm:text-base hover:text-orange-600 ${
+                      isActive ? 'text-orange-500 font-semibold' : 'text-slate-700 font-normal'
+                    }`
+                  }
+                >
+                  {item.name}
+                </NavLink>
+              ))}
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Navbar Lower */}
-      <div className="bg-white py-3 px-8 border-b border-gray-200">
-        <div className="container mx-auto max-w-6xl">
-          <div className="w-full flex items-center justify-center">
-            {/* Menu Items */}
-            <div className="flex gap-10">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  `text-xs sm:text-sm hover:text-orange-600 ${isActive ? 'text-orange-500 font-bold' : 'text-slate-700 font-medium'}`
-                }
-              >
-                Home
-              </NavLink>
-              <NavLink
-                to="/paket"
-                className={({ isActive }) =>
-                  `text-xs sm:text-sm hover:text-orange-600 ${isActive ? 'text-orange-500 font-bold' : 'text-slate-700 font-medium'}`
-                }
-              >
-                Paket
-              </NavLink>
-              <NavLink
-                to="/hitung-paket"
-                className={({ isActive }) =>
-                  `text-xs sm:text-sm hover:text-orange-600 ${isActive ? 'text-orange-500 font-bold' : 'text-slate-700 font-medium'}`
-                }
-              >
-                Hitung Paket
-              </NavLink>
+            {/* Login Button */}
+            <div className="flex items-center gap-9">
+              <div className="flex gap-2">
+                <span className="text-base text-primary">ID</span>
+                <span className="text-base text-black">|</span>
+                <span className="text-base text-black">EN</span>
+              </div>
+              <MainButton text="Masuk" onClick={() => console.log('Login')} />
             </div>
           </div>
         </div>

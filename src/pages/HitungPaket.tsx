@@ -1,5 +1,5 @@
 const HitungPaket: React.FC = () => {
-  return <div>HitungPaket</div>;
+  return <div className="min-h-screen">HitungPaket</div>;
 };
 
 export default HitungPaket;

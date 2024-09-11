@@ -1,39 +1,27 @@
-import { FaStar, FaPlay } from 'react-icons/fa';
 import Container from '@/components/Container';
+import MainButton from '../MainButton';
 
 const HeroSection: React.FC = () => {
   return (
-    <section
-      className="flex justify-center items-center relative h-[500px] bg-cover bg-center"
-      style={{ backgroundImage: `url('https://umroh360.com/banner-2.png')` }}
-    >
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-
+    <section className="flex justify-center items-center relative mt-8">
       {/* Content */}
       <Container>
-        <div className="relative flex flex-col gap-4 items-center justify-center h-full text-center text-white">
-          <h1 className="text-5xl font-bold">Umroh 360</h1>
-          <p className="text-lg">Rasakan berbagai pengalaman baru yang bisa kamu coba selama perjalanan umroh</p>
-
-          {/* Rating and Buttons */}
-          <div className="flex gap-1">
-            <FaStar className="text-yellow-400" />
-            <FaStar className="text-yellow-400" />
-            <FaStar className="text-yellow-400" />
-            <FaStar className="text-yellow-400" />
-            <FaStar className="text-yellow-400" />
+        <div className="relative bg-hero-gradient px-6 py-12 rounded-b-xl overflow-hidden">
+          <div className="flex flex-col p-2 items-start justify-center gap-7 max-w-[720px]">
+            <div className="bg-primary py-2 px-5 rounded-full bg-opacity-10 ">
+              <span className="text-lg font-medium text-dark">No. 1 di Indonesia</span>
+            </div>
+            <h1 className="text-[3.5rem] leading-[80px] font-bold text-dark">
+              Paket Umroh Terbaik untuk Setiap Perjalanan Ibadah Anda
+            </h1>
+            <p className='text-xl leading-8 text-slate-500'>
+              Temukan paket reguler, private, atau buat paket umroh sesuai kebutuhan Anda. Perjalanan spiritual lebih
+              mudah dan nyaman dengan kami.
+            </p>
+            <MainButton text="Lihat Paket" onClick={() => console.log('Lihat Paket')} />
           </div>
-
-          <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4 mb-6">
-            <button className="bg-blue-600 text-white py-2 px-8 rounded-full text-lg hover:bg-blue-700 transition-colors">
-              Kalkulator Trip
-            </button>
-
-            <button className="border border-white text-white py-2 px-8 rounded-full flex items-center hover:bg-white hover:text-black transition-colors duration-300">
-              <FaPlay />
-              <span className="ml-3">Cara Kami Bekerja?</span>
-            </button>
+          <div className="absolute bottom-0 right-0">
+            <img src="/images/hero.png" alt="Hero" className="w-full" />
           </div>
         </div>
       </Container>

@@ -1,10 +1,14 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Home from './pages/Homepage';
-import Paket from './pages/Paket';
-import HitungPaket from './pages/HitungPaket';
-import MainLayout from './components/layouts/MainLayout';
+import Home from '@/pages/Homepage';
+import Produk from '@/pages/Produk';
+import HitungPaket from '@/pages/HitungPaket';
+import MainLayout from '@/components/layouts/MainLayout';
+import ProdukPaket from '@/pages/ProdukPaket';
+import ProdukVisa from '@/pages/ProdukVisa';
+import ProdukLA from '@/pages/ProdukLA';
+
 import './index.css';
 
 const router = createBrowserRouter([
@@ -16,8 +20,22 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/paket',
-        element: <Paket />,
+        path: '/produk',
+        element: <Produk />,
+        children: [
+          {
+            index: true,
+            element: <ProdukPaket />,
+          },
+          {
+            path: 'visa',
+            element: <ProdukVisa />,
+          },
+          {
+            path: 'la',
+            element: <ProdukLA />,
+          },
+        ],
       },
       {
         path: '/hitung-paket',

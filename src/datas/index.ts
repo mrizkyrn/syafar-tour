@@ -1,26 +1,40 @@
 export const Products = [
   {
-    title: 'Umroh Smart Family - Platinum 12D',
-    type: 'Private - Tour',
-    priceDesc: 'Mulai Mulai Rp. 19,900,000 PER PAX',
-    imageUrl: 'https://api.umroh360.com/public/storage/thumbnail/BuahTangan/HsRRueRiZh4rzsIflgzHEzyAZ1C4RCp2.png',
+    title: 'Umroh Bermanfaat - LA ONLY',
+    category: 'private',
+    price: 11900000,
+    imageUrl: 'images/umroh1.png',
   },
   {
-    title: 'Umroh Smart Family - Platinum 9D',
-    type: 'Private - Tour',
-    priceDesc: 'Mulai Mulai Rp. 16,900,000 PER PAX',
-    imageUrl: 'https://api.umroh360.com/public/storage/thumbnail/BuahTangan/1zSnAPshMkyktxyOxA1APK0bwUIltRkw.png',
+    title: 'Umroh Tengah Ramadhan',
+    category: 'private',
+    price: 32900000,
+    imageUrl: 'images/umroh2.png',
   },
   {
-    title: 'Umroh Smart Family - Platinum 12D',
-    type: 'Private - Tour',
-    priceDesc: 'Mulai Mulai Rp. 19,900,000 PER PAX',
-    imageUrl: 'https://api.umroh360.com/public/storage/thumbnail/BuahTangan/HsRRueRiZh4rzsIflgzHEzyAZ1C4RCp2.png',
+    title: 'Umroh Berkah Ramadhan',
+    category: 'private',
+    price: 30000000,
+    imageUrl: 'images/umroh3.png',
+  },
+];
+
+export const ReasonContents = [
+  {
+    imageUrl: 'images/reason1.png',
+    title: 'Layanan Profesional',
+    description: 'Tim berpengalaman siap memberikan bantuan dan informasi untuk memastikan kenyamanan Anda.',
   },
   {
-    title: 'Umroh Smart Family - Platinum 9D',
-    type: 'Private - Tour',
-    priceDesc: 'Mulai Mulai Rp. 16,900,000 PER PAX',
-    imageUrl: 'https://api.umroh360.com/public/storage/thumbnail/BuahTangan/1zSnAPshMkyktxyOxA1APK0bwUIltRkw.png',
+    imageUrl: 'images/reason2.png',
+    title: 'Fasilitas Lengkap',
+    description:
+      'Pilih akomodasi sesuai preferensi Anda, dari hotel bintang 3 hingga bintang 5, dengan layanan terbaik.',
+  },
+  {
+    imageUrl: 'images/reason3.png',
+    title: 'Paket Fleksibel',
+    description:
+      'Kami menawarkan beragam paket umroh, dari reguler hingga private, serta opsi custom untuk kebutuhan khusus.',
   },
 ];
