@@ -31,8 +31,8 @@ const Navbar: React.FC = () => {
                   key={index}
                   to={item.to}
                   className={({ isActive }) =>
-                    `text-xs sm:text-base hover:text-orange-600 ${
-                      isActive ? 'text-orange-500 font-semibold' : 'text-slate-700 font-normal'
+                    `text-xs sm:text-base hover:text-primaryDark ${
+                      isActive ? 'text-primary font-semibold' : 'text-slate-700 font-normal'
                     }`
                   }
                 >

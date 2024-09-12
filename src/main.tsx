@@ -1,13 +1,15 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Home from '@/pages/Homepage';
-import Produk from '@/pages/Produk';
-import HitungPaket from '@/pages/HitungPaket';
 import MainLayout from '@/components/layouts/MainLayout';
-import ProdukPaket from '@/pages/ProdukPaket';
-import ProdukVisa from '@/pages/ProdukVisa';
-import ProdukLA from '@/pages/ProdukLA';
+import Home from '@/pages/Homepage';
+import About from '@/pages/About';
+import Product from '@/pages/Product';
+import ProductPaket from '@/pages/ProductPacket';
+import ProductVisa from '@/pages/ProductVisa';
+import ProductLA from '@/pages/ProductLA';
+import Packet from '@/pages/Packet';
+import Faq from '@/pages/Faq';
 
 import './index.css';
 
@@ -20,27 +22,35 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
+        path: '/tentang',
+        element: <About />,
+      },
+      {
         path: '/produk',
-        element: <Produk />,
+        element: <Product />,
         children: [
           {
             index: true,
-            element: <ProdukPaket />,
+            element: <ProductPaket />,
           },
           {
             path: 'visa',
-            element: <ProdukVisa />,
+            element: <ProductVisa />,
           },
           {
             path: 'la',
-            element: <ProdukLA />,
+            element: <ProductLA />,
           },
         ],
       },
       {
-        path: '/hitung-paket',
-        element: <HitungPaket />,
+        path: '/paket',
+        element: <Packet />,
       },
+      {
+        path: '/faq',
+        element: <Faq />,
+      }
     ],
   },
 ]);

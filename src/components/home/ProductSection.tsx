@@ -27,7 +27,7 @@ const ProductSection: React.FC = () => {
               ))}
             </div>
 
-            <button className="px-12 border border-dark text-dark font-semibold py-3 rounded-lg hover:border-primary hover:bg-primary hover:text-white transition-all duration-200">
+            <button className="px-12 border border-dark text-dark font-semibold py-3 rounded-lg hover:bg-dark hover:text-white transition-all duration-200">
               <Link to="/produk">Selengkapnya</Link>
             </button>
           </div>
@@ -41,7 +41,7 @@ const ProductSection: React.FC = () => {
               ))}
             </div>
 
-            <button className="px-12 border border-dark text-dark font-semibold py-3 rounded-lg hover:border-primary hover:bg-primary hover:text-white transition-all duration-200">
+            <button className="px-12 border border-dark text-dark font-semibold py-3 rounded-lg hover:bg-dark hover:text-white transition-all duration-200">
               <Link to="/produk">Selengkapnya</Link>
             </button>
           </div>

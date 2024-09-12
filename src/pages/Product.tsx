@@ -1,13 +1,14 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import Container from '@/components/Container';
-// import ProductCard from '@/components/ProductCard';
-// import { Products } from '@/datas';
 
-const Produk: React.FC = () => {
+const Product: React.FC = () => {
   return (
     <div className="py-10">
       <Container>
-        <h2 className="text-xl md:text-2xl font-bold mb-5">Aktivitas Terbaik</h2>
+        <div className="flex items-center justify-start mb-8 gap-6">
+          <div className="w-2 h-8 bg-primary" />
+          <h2 className="text-xl md:text-2xl font-bold">Pilihan Terbaik</h2>
+        </div>
 
         <div className="flex items-center mb-8 gap-10">
           <NavLink
@@ -43,4 +44,4 @@ const Produk: React.FC = () => {
   );
 };
 
-export default Produk;
+export default Product;

@@ -1,7 +1,10 @@
+import { useNavigate } from 'react-router-dom';
 import Container from '@/components/Container';
-import MainButton from '../MainButton';
+import MainButton from '@/components/MainButton';
 
 const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="flex justify-center items-center relative mt-8">
       {/* Content */}
@@ -18,7 +21,7 @@ const HeroSection: React.FC = () => {
               Temukan paket reguler, private, atau buat paket umroh sesuai kebutuhan Anda. Perjalanan spiritual lebih
               mudah dan nyaman dengan kami.
             </p>
-            <MainButton text="Lihat Paket" onClick={() => console.log('Lihat Paket')} />
+            <MainButton text="Lihat Paket" onClick={() => navigate('/paket')} />
           </div>
           <div className="absolute bottom-0 right-0">
             <img src="/images/hero.png" alt="Hero" className="w-full" />

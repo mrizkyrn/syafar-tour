@@ -1,27 +1,43 @@
 import Container from '@/components/Container';
 import AboutSection from '@/components/home/AboutSection';
+import BannerSection from '@/components/home/BannerSection';
+import FaqSection from '@/components/home/FaqSection';
 import HeroSection from '@/components/home/HeroSection';
 import ProductSection from '@/components/home/ProductSection';
 import ReasonSection from '@/components/home/ReasonSection';
 
-const Homepage = () => {
+const Homepage: React.FC = () => {
   return (
     <>
       <HeroSection />
-      <section className="py-12 mt-12">
-        <Container>
-          <div className='flex justify-around items-center'>
-            <img src="/images/mitra1.png" alt="Mitra" className="w-28 grayscale" />
-            <img src="/images/mitra2.png" alt="Mitra" className="w-28 grayscale" />
-            <img src="/images/mitra3.png" alt="Mitra" className="w-24 grayscale" />
-            <img src="/images/mitra4.png" alt="Mitra" className="w-24 grayscale" />
-            <img src="/images/mitra5.png" alt="Mitra" className="w-24 grayscale" />
-          </div>
-        </Container>
-      </section>
+      <BannerSection />
       <ProductSection />
       <AboutSection />
       <ReasonSection />
+      <FaqSection />
+      <section className=" bg-primary">
+        <Container>
+          <div className="flex justify-between items-end">
+            <div className="flex items-start flex-col gap-12 py-16 w-1/2">
+              <h1 className="text-5xl leading-normal font-bold text-white">Mulai Perjalanan Ibadah Anda Sekarang!</h1>
+              <p className="text-white text-2xl leading-9">
+                Nikmati layanan terbaik dengan paket fleksibel, fasilitas lengkap, dan bimbingan dari tim profesional
+                kami.
+              </p>
+              <button
+                className="bg-secondary text-white font-medium text-xl px-7 py-3 rounded-md hover:bg-black transition-colors duration-300"
+                onClick={() => console.log('clicked')}
+              >
+                Lihat Paket
+              </button>
+            </div>
+
+            <div className="w-1/3">
+              <img src="/images/image.png" alt="image" className="w-full" />
+            </div>
+          </div>
+        </Container>
+      </section>
     </>
   );
 };
