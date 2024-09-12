@@ -5,12 +5,12 @@ import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white border-y border-gray-200 py-8 mt-16">
+    <footer className="bg-white border-y border-gray-200 py-12 ">
       <Container>
-        <div className="flex items-center justify-between gap-24">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-24">
           {/* Logo and Brand */}
-          <div className="w-1/3">
-            <Logo />
+          <div className="w-full lg:w-1/3">
+            <Logo className="w-48 lg:w-52" />
             <p className="text-black mt-4 text-sm">
               Syafar Tour adalah penyedia layanan umroh dan haji terpercaya yang berkomitmen untuk memberikan pengalaman
               ibadah yang nyaman dan aman. Kami menawarkan berbagai pilihan paket yang dapat disesuaikan dengan
@@ -18,11 +18,11 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Links */}
             <div className="col-span-1">
-              <h2 className="font-bold text-lg mb-7 uppercase">Tautan</h2>
-              <ul className="flex flex-col gap-5">
+              <h2 className="font-bold text-lg mb-3 lg:mb-7 uppercase">Tautan</h2>
+              <ul className="flex flex-col gap-3 lg:gap-5">
                 <li>
                   <Link to="/" className="text-black text-sm">
                     Home
@@ -53,8 +53,8 @@ const Footer: React.FC = () => {
 
             {/* Policies */}
             <div className="col-span-1">
-              <h2 className="font-bold text-lg mb-7 uppercase">Kebijakan</h2>
-              <ul className="flex flex-col gap-5">
+              <h2 className="font-bold text-lg mb-3 lg:mb-7 uppercase">Kebijakan</h2>
+              <ul className="flex flex-col gap-3 lg:gap-5">
                 <li>
                   <a href="#" className="text-black text-sm">
                     Kebijakan Privasi
@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
 
             {/* Follow Us */}
             <div className="col-span-1">
-              <h2 className="font-bold text-lg mb-7 uppercase">Follow Us</h2>
+              <h2 className="font-bold text-lg mb-3 lg:mb-7 uppercase">Tautan</h2>
               <div className="flex flex-wrap gap-3">
                 <a href="#" aria-label="Facebook" className="text-blue-500">
                   <FaFacebookSquare className="text-3xl" />
@@ -99,7 +99,7 @@ const Footer: React.FC = () => {
 
         {/* Copyright Section */}
         <div className="py-4 mt-12">
-          <span className="text-base text-black">Copyright © 2024 Syafar Tour, MMG</span>
+          <span className="text-sm lg:text-base text-black">Copyright © 2024 Syafar Tour, MMG</span>
         </div>
       </Container>
     </footer>

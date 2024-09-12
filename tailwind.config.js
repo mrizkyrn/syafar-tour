@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       backgroundImage: {
-        'hero-gradient': 'linear-gradient(180deg, rgba(240, 242, 245, 0) 80.6%, #D7AF57 354.32%)',
+        'linear-gradient': 'linear-gradient(180deg, rgba(240, 242, 245, 0) 80.6%, #D7AF57 354.32%)',
+        'section-pattern': 'url("/images/pattern.png")',
       },
       colors: {
         primary: '#D7AF57',
