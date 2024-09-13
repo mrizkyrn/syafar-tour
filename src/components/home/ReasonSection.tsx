@@ -1,5 +1,5 @@
 import Container from '@/components/Container';
-import ReasonCard from '../cards/ReasonCard';
+import ReasonCard from '@/components/cards/ReasonCard';
 
 export const ReasonContents = [
   {

@@ -23,7 +23,7 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      'react-refresh/suspense-no-refresh': 'off',
+      'react-refresh/only-export-components': 'off',
     },
   },
 )

@@ -1,7 +1,22 @@
+import ProductCard from '@/components/cards/ProductCard';
+import { Products } from '@/datas';
+
 const ProductLA: React.FC = () => {
+  const filteredProducts = Products.filter(product => product.category === 'LA');
+
   return (
     <div className="min-h-screen">
-      <h1 className="text-3xl font-bold text-dark text-center mt-10">Produk LA</h1>
+      {filteredProducts.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14">
+          {filteredProducts.map((product, index) => (
+            <ProductCard key={index} product={product} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center mt-24">
+          <p className="text-lg text-gray-500">Tidak ada produk yang tersedia.</p>
+        </div>
+      )}
     </div>
   );
 };

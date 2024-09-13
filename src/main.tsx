@@ -38,7 +38,7 @@ const router = createBrowserRouter([
             element: <ProductVisa />,
           },
           {
-            path: 'la',
+            path: 'hotel',
             element: <ProductLA />,
           },
         ],

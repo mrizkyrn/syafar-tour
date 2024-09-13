@@ -1,6 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import Container from '@/components/Container';
 
 const LastSection: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <section className="bg-primary bg-section-pattern bg-no-repeat bg-cover bg-center">
       <Container>
@@ -15,7 +18,7 @@ const LastSection: React.FC = () => {
             </p>
             <button
               className="bg-secondary text-white font-medium text-xs lg:text-xl px-7 py-3 rounded-md hover:bg-black transition-colors duration-300"
-              onClick={() => console.log('clicked')}
+              onClick={() => navigate('/paket')}
             >
               Lihat Paket
             </button>
