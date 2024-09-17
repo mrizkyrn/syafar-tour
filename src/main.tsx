@@ -1,18 +1,24 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import AuthProvider from './hook/AuthProvider';
-import Register from '@/pages/Register';
-import Login from '@/pages/Login';
+
 import MainLayout from '@/components/layouts/MainLayout';
-import Home from '@/pages/Homepage';
+import ProtectedRoute from '@/components/layouts/ProtectedRoute';
+import AuthProvider from '@/hook/AuthProvider';
 import About from '@/pages/About';
+import AdminDashboard from '@/pages/AdminDashboard';
+import Faq from '@/pages/Faq';
+import Home from '@/pages/Homepage';
+import Login from '@/pages/Login';
+import NotAuthorized from '@/pages/NotAuthorized';
 import Product from '@/pages/Product';
 import ProductPaket from '@/pages/ProductPacket';
 import ProductVisa from '@/pages/ProductVisa';
 import ProductLA from '@/pages/ProductLA';
 import Packet from '@/pages/Packet';
-import Faq from '@/pages/Faq';
+import Register from '@/pages/Register';
+import UserProfile from '@/pages/UserProfile';
+import UserTransaction from '@/pages/UserTransaction';
 
 import './index.css';
 
@@ -62,7 +68,36 @@ const router = createBrowserRouter([
         path: '/faq',
         element: <Faq />,
       },
+      {
+        path: '/user/profile',
+        element: (
+          <ProtectedRoute requiredRoles={['ADMIN', 'MITRA', 'USER']}>
+            <UserProfile />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/user/transaksi',
+        element: (
+          <ProtectedRoute requiredRoles={['ADMIN', 'MITRA', 'USER']}>
+            <UserTransaction />
+          </ProtectedRoute>
+        ),
+      },
+      // Admin route
+      {
+        path: '/admin/dashboard',
+        element: (
+          <ProtectedRoute requiredRoles={['ADMIN']}>
+            <AdminDashboard />
+          </ProtectedRoute>
+        ),
+      },
     ],
+  },
+  {
+    path: '/not-authorized',
+    element: <NotAuthorized />,
   },
 ]);
 

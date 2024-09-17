@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface UserData {
   id: number;
@@ -15,6 +16,7 @@ interface UserDropdownProps {
 
 const UserDropdown: React.FC<UserDropdownProps> = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -39,11 +41,35 @@ const UserDropdown: React.FC<UserDropdownProps> = ({ user, onLogout }) => {
           </div>
           <hr className="my-1" />
           {user?.role === 'ADMIN' ? (
-            <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">Dashboard</button>
+            <button
+              className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+              onClick={() => {
+                navigate('/admin/dashboard');
+                setIsOpen(false);
+              }}
+            >
+              Dashboard
+            </button>
           ) : (
             <>
-              <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">Profile</button>
-              <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100">Transaksi</button>
+              <button
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  navigate('/user/profile');
+                  setIsOpen(false);
+                }}
+              >
+                Profile
+              </button>
+              <button
+                className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
+                onClick={() => {
+                  navigate('/user/transaksi');
+                  setIsOpen(false);
+                }}
+              >
+                Transaksi
+              </button>
             </>
           )}
           <button className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100" onClick={onLogout}>

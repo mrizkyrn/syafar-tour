@@ -14,21 +14,28 @@ interface AuthContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   userLogout: () => Promise<void>;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         console.log("fetching user");
+        setIsLoading(true);
+
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/v1/auth/me`, { withCredentials: true });
         setUser(response.data.user);
+        
       } catch (error: any) {
         console.error(error.response.data);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -44,7 +51,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
   };
 
-  return <AuthContext.Provider value={{ user, setUser, userLogout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, setUser, userLogout, isLoading }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {
