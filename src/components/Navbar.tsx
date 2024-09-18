@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hook/AuthProvider';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import Logo from '@/components/Logo';
-import MainButton from './MainButton';
+import MainButton from '@/components/MainButton';
+import UserDropdown from '@/components/UserDropdown';
 
 interface NavbarItem {
   name: string;
@@ -19,6 +21,9 @@ const navItems: NavbarItem[] = [
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, userLogout } = useAuth();
+
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -56,7 +61,11 @@ const Navbar: React.FC = () => {
                 <span className="text-base text-black">|</span>
                 <span className="text-base text-black">EN</span>
               </div>
-              <MainButton text="Masuk" onClick={() => console.log('Login')} />
+              {user ? (
+                <UserDropdown user={user} onLogout={userLogout} />
+              ) : (
+                <MainButton text="Masuk" onClick={() => navigate('/login')} />
+              )}
             </div>
 
             {/* Hamburger Menu */}
@@ -82,7 +91,9 @@ const Navbar: React.FC = () => {
               <NavLink
                 to={item.to}
                 className={({ isActive }) =>
-                  `block text-xs sm:text-base font-medium hover:text-primaryDark ${isActive ? 'text-primary' : 'text-gray-700'}`
+                  `block text-xs sm:text-base font-medium hover:text-primaryDark ${
+                    isActive ? 'text-primary' : 'text-gray-700'
+                  }`
                 }
                 onClick={toggleMenu}
               >
@@ -93,7 +104,11 @@ const Navbar: React.FC = () => {
         </ul>
 
         {/* Login Button */}
-        <MainButton text="Masuk" onClick={() => console.log('Login')} />
+        {user ? (
+          <UserDropdown user={user} onLogout={userLogout} />
+        ) : (
+          <MainButton text="Masuk" onClick={() => navigate('/login')} />
+        )}
       </div>
     </nav>
   );
