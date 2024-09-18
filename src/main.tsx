@@ -6,7 +6,7 @@ import MainLayout from '@/components/layouts/MainLayout';
 import ProtectedRoute from '@/components/layouts/ProtectedRoute';
 import AuthProvider from '@/hook/AuthProvider';
 import About from '@/pages/About';
-import AdminDashboard from '@/pages/AdminDashboard';
+import AdminDashboard from '@/pages/admin/AdminDashboard';
 import Faq from '@/pages/Faq';
 import Home from '@/pages/Homepage';
 import Login from '@/pages/Login';
@@ -21,6 +21,9 @@ import UserProfile from '@/pages/UserProfile';
 import UserTransaction from '@/pages/UserTransaction';
 
 import './index.css';
+import AdminLayout from './components/layouts/AdminLayout';
+import Price from './pages/admin/Price';
+import CalculationResult from './pages/CalculationResult';
 
 const router = createBrowserRouter([
   {
@@ -69,6 +72,10 @@ const router = createBrowserRouter([
         element: <Faq />,
       },
       {
+        path: 'kalkulasi/:id',
+        element: <CalculationResult />,
+      },
+      {
         path: '/user/profile',
         element: (
           <ProtectedRoute requiredRoles={['ADMIN', 'MITRA', 'USER']}>
@@ -85,13 +92,22 @@ const router = createBrowserRouter([
         ),
       },
       // Admin route
+    ],
+  },
+  {
+    element: (
+      <ProtectedRoute requiredRoles={['ADMIN']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
       {
         path: '/admin/dashboard',
-        element: (
-          <ProtectedRoute requiredRoles={['ADMIN']}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        ),
+        element: <AdminDashboard />,
+      },
+      {
+        path: '/admin/:type',
+        element: <Price />,
       },
     ],
   },

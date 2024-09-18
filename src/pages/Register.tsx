@@ -7,6 +7,7 @@ import Logo from '@/components/Logo';
 const Register: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [passwordConfirmationVisible, setPasswordConfirmationVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -37,6 +38,8 @@ const Register: React.FC = () => {
     }
 
     try {
+      setLoading(true);
+
       const response = await register({
         full_name: formData.fullName,
         email: formData.email,
@@ -57,6 +60,8 @@ const Register: React.FC = () => {
       }, 3000);
     } catch (error: any) {
       setErrors(error.message || 'Terjadi kesalahan. Silakan coba lagi.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -169,9 +174,10 @@ const Register: React.FC = () => {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={loading}
             className="bg-primary text-white font-medium py-3 rounded-lg shadow-lg hover:bg-primaryDark transition-colors"
           >
-            Daftar Sekarang
+            {loading ? 'Loading...' : 'Daftar Sekarang'}
           </button>
         </form>
       </div>

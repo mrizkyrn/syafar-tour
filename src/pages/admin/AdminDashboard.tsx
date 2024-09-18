@@ -1,4 +1,4 @@
-import Container from "@/components/Container";
+import Container from '@/components/Container';
 
 const AdminDashboard: React.FC = () => {
   return (

@@ -7,6 +7,7 @@ import Logo from '@/components/Logo';
 
 const Login: React.FC = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { setUser } = useAuth();
 
   const navigate = useNavigate();
@@ -31,6 +32,8 @@ const Login: React.FC = () => {
     setErrors(null);
 
     try {
+      setLoading(true);
+
       const response = await login({
         email: formData.email,
         password: formData.password
@@ -46,6 +49,8 @@ const Login: React.FC = () => {
       navigate('/');
     } catch (error: any) {
       setErrors(error.message || 'Terjadi kesalahan. Silakan coba lagi.');
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -115,9 +120,10 @@ const Login: React.FC = () => {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={loading}
             className="bg-primary text-white font-medium py-3 rounded-lg shadow-lg hover:bg-primaryDark transition-colors"
           >
-            Masuk Sekarang
+            {loading ? 'Loading...' : 'Masuk Sekarang'}
           </button>
         </form>
       </div>
