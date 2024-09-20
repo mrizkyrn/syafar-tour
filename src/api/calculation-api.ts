@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 
-export const calculateTotal = async (data: any) => {
+export const create = async (data: any) => {
    try {
       const response = await api.post('/', data);
       return response.data;
@@ -16,7 +16,7 @@ export const calculateTotal = async (data: any) => {
    }
 }
 
-export const getCalculation = async (id: string) => {
+export const get = async (id: string) => {
    try {
       const response = await api.get(`/${id}`);
       return response.data;

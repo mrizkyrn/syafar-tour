@@ -22,7 +22,7 @@ import UserTransaction from '@/pages/UserTransaction';
 
 import './index.css';
 import AdminLayout from './components/layouts/AdminLayout';
-import Price from './pages/admin/Price';
+import Price from './pages/admin/UserService';
 import CalculationResult from './pages/CalculationResult';
 
 const router = createBrowserRouter([

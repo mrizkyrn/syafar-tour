@@ -22,7 +22,10 @@ export const TextInput: React.FC<TextInputProps> = ({ label, showInfo = false, i
         <label className="text-sm md:text-lg font-medium text-dark">{label}</label>
 
         {showInfo && (
-          <div className="flex items-center text-xs text-end md:text-sm cursor-pointer text-gray-500" onClick={toggleModal}>
+          <div
+            className="flex items-center text-xs text-end md:text-sm cursor-pointer text-gray-500"
+            onClick={toggleModal}
+          >
             Panduan
             <IoInformationCircleOutline className="ml-1 text-lg" />
           </div>
@@ -56,7 +59,7 @@ export const TextInput: React.FC<TextInputProps> = ({ label, showInfo = false, i
 
 interface SelectInputProps {
   label: string;
-  options: string[];
+  options: { value: string; label: string }[];
   [key: string]: any;
 }
 
@@ -68,10 +71,12 @@ export const SelectInput: React.FC<SelectInputProps> = ({ label, options, ...pro
         {...props}
         className="w-full px-3 py-3 md:px-5 md:py-4 mt-3 border text-xs md:text-base border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
       >
-        <option value="">Pilih {label}</option>
+        <option value="" disabled>
+          Pilih {label}
+        </option>
         {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
+          <option key={option.value} value={option.value}>
+            {option.label}
           </option>
         ))}
       </select>

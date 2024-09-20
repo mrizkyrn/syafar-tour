@@ -44,7 +44,7 @@ const AdminSidebar: React.FC = () => {
               <ul className="mt-2 space-y-2">
                 <li>
                   <NavLink
-                    to="/admin/flight"
+                    to="/admin/tiket-pesawat"
                     className={({ isActive }) =>
                       `w-full block px-6 py-2 hover:bg-secondary rounded-md ${
                         isActive ? 'text-primary bg-secondary' : 'text-white bg-dark'
@@ -56,7 +56,7 @@ const AdminSidebar: React.FC = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/admin/hotel-mekkah"
+                    to="/admin/hotel-makkah"
                     className={({ isActive }) =>
                       `w-full block px-6 py-2 hover:bg-secondary rounded-md ${
                         isActive ? 'text-primary bg-secondary' : 'text-white bg-dark'
@@ -68,7 +68,7 @@ const AdminSidebar: React.FC = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/admin/hotel-maddinah"
+                    to="/admin/hotel-madinah"
                     className={({ isActive }) =>
                       `w-full block px-6 py-2 hover:bg-secondary rounded-md ${
                         isActive ? 'text-primary bg-secondary' : 'text-white bg-dark'
@@ -80,7 +80,7 @@ const AdminSidebar: React.FC = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/admin/transportation"
+                    to="/admin/transportasi"
                     className={({ isActive }) =>
                       `w-full block px-6 py-2 hover:bg-secondary rounded-md ${
                         isActive ? 'text-primary bg-secondary' : 'text-white bg-dark'
@@ -92,7 +92,7 @@ const AdminSidebar: React.FC = () => {
                 </li>
                 <li>
                   <NavLink
-                    to="/admin/muthawwif"
+                    to="/admin/muthawif"
                     className={({ isActive }) =>
                       `w-full block px-6 py-2 hover:bg-secondary rounded-md ${
                         isActive ? 'text-primary bg-secondary' : 'text-white bg-dark'

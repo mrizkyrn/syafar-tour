@@ -26,7 +26,6 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log("fetching user");
         setIsLoading(true);
 
         const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/v1/auth/me`, { withCredentials: true });
