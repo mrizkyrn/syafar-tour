@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { IoInformationCircleOutline } from 'react-icons/io5';
 
 interface TextInputProps {
-  label: string;
+  label?: string;
   showInfo?: boolean;
   infoText?: string;
   [key: string]: any;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ label, showInfo = false, infoText, ...props }) => {
+export const TextInput: React.FC<TextInputProps> = ({ label = '', showInfo = false, infoText, ...props }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const toggleModal = () => {
@@ -19,7 +19,9 @@ export const TextInput: React.FC<TextInputProps> = ({ label, showInfo = false, i
     <div className="w-full">
       {/* Label and Info */}
       <div className="flex items-center justify-between">
-        <label className="text-sm md:text-lg font-medium text-dark">{label}</label>
+        {
+          label && <label className="text-sm md:text-lg font-medium text-dark">{label}</label>
+        }
 
         {showInfo && (
           <div

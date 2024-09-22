@@ -25,9 +25,9 @@ export const getByType = async (type: string) => {
   }
 }
 
-export const bulkUpdate = async (data: any) => {
+export const bulkUpdate = async (type: string, data: any) => {
   try {
-    const response = await api.patch('/bulk', data);
+    const response = await api.post('/bulk', { type, data });
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);

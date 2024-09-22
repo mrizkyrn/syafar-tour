@@ -1,165 +1,224 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { ReactGrid, Column, Row, CellChange, TextCell } from '@silevis/reactgrid';
+import { ReactGrid, CellChange, Row, Column, TextCell } from '@silevis/reactgrid';
+// import { Id, MenuOption, SelectionMode } from '@silevis/reactgrid';
 import { getByType, bulkUpdate } from '@/api/user-service-api';
 
 import Container from '@/components/Container';
-import formatPrice from '@/utils/formatPrice';
 
 import '@silevis/reactgrid/styles.css';
+import formatPrice from '@/utils/formatPrice';
 
-interface PriceData {
-  id: string;
+interface UserServiceData {
+  id?: string;
   name: string;
   price: string;
 }
 
-interface ModifiedRow {
-  id: string;
-  service_name: string;
-  service_price: number;
-}
-
-const getColumns = (): Column[] => [
-  { columnId: 'name', width: 300 },
-  { columnId: 'price', width: 200 },
-];
-
-const headerRow: Row = {
-  rowId: 'header',
-  cells: [
-    { type: 'header', text: 'Name' },
-    { type: 'header', text: 'Price' },
-  ],
-};
-
-const getRows = (data: PriceData[]): Row[] => [
-  headerRow,
-  ...data.map<Row>((item) => ({
-    rowId: item.id.toString(),
-    cells: [
-      { type: 'text', text: item.name },
-      { type: 'text', text: formatPrice(item.price) },
-    ],
-  })),
-];
-
-// Apply changes and track modified rows
-const applyChangesToData = (
-  changes: CellChange<TextCell>[],
-  prevData: PriceData[],
-  modifiedRows: ModifiedRow[]
-): [PriceData[], ModifiedRow[]] => {
-  const updatedData = [...prevData];
-
-  changes.forEach((change) => {
-    const dataIndex = updatedData.findIndex((ticket) => ticket.id === change.rowId);
-    const fieldName = change.columnId as keyof PriceData;
-
-    if (fieldName === 'price') {
-      const rawPrice = change.newCell.text.replace(/[Rp,.]/g, '').trim();
-      updatedData[dataIndex][fieldName] = rawPrice;
-    } else {
-      updatedData[dataIndex][fieldName] = change.newCell.text;
-    }
-
-    // Track modified rows
-    const modifiedRowIndex = modifiedRows.findIndex(row => row.id === change.rowId);
-    const newRowData = {
-      id: change.rowId.toString(),
-      service_name: updatedData[dataIndex].name,
-      service_price: parseFloat(updatedData[dataIndex].price),
-    };
-
-    if (modifiedRowIndex !== -1) {
-      modifiedRows[modifiedRowIndex] = newRowData;
-    } else {
-      modifiedRows.push(newRowData);
-    }
-  });
-
-  return [updatedData, [...modifiedRows]];
-};
-
 const UserService: React.FC = () => {
-  const [data, setData] = useState<PriceData[]>([]);
-  const [modifiedRows, setModifiedRows] = useState<ModifiedRow[]>([]);
-  const [loading, setLoading] = useState(true);
   const { type = '' } = useParams<{ type: string }>();
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await getByType(type);
-      const fetchedData = response.data.map((item: any) => ({
-        id: item.id,
-        name: item.service_name,
-        price: item.service_price,
-      }));
-      setData(fetchedData);
-      setModifiedRows([]);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [type]);
+  const [userServices, setUserServices] = useState<UserServiceData[]>([]);
+  const [modifiedRows, setModifiedRows] = useState<Set<number>>(new Set());
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getByType(type);
+        const services = response.data.map((data: any) => ({
+          id: data.id,
+          name: data.service_name,
+          price: data.service_price.toString(),
+        }));
+        setUserServices(services);
+        setModifiedRows(new Set());
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+    fetchData();
+  }, [type]);
+
+  const columns: Column[] = useMemo(
+    () => [
+      { columnId: 'name', width: 350 },
+      { columnId: 'price', width: 200 },
+    ],
+    []
+  );
+
+  const rows: Row[] = useMemo(
+    () => [
+      {
+        rowId: 'header',
+        cells: [
+          { type: 'header', text: 'Name' },
+          { type: 'header', text: 'Price' },
+        ],
+        height: 35,
+      },
+      ...userServices.map<Row>((service, idx) => ({
+        rowId: idx,
+        cells: [
+          { type: 'text', text: service.name },
+          { type: 'text', text: formatPrice(service.price) },
+        ],
+        height: 35,
+      })),
+    ],
+    [userServices]
+  );
 
   const handleChanges = (changes: CellChange<TextCell>[]) => {
-    setData((prevData) => {
-      const [updatedData, updatedModifiedRows] = applyChangesToData(changes, prevData, modifiedRows);
-      setModifiedRows(updatedModifiedRows);
+    setUserServices((prevData) => {
+      const updatedData = applyChangesToData(changes, prevData);
+
+      const newModifiedRows = new Set(modifiedRows);
+      changes.forEach((change) => {
+        newModifiedRows.add(parseInt(change.rowId.toString()));
+      });
+
+      setModifiedRows(newModifiedRows);
       return updatedData;
     });
   };
 
-  const saveChanges = async () => {
-    if (modifiedRows.length === 0) {
-      alert('No changes to save.');
-      return;
-    }
+  const applyChangesToData = (changes: CellChange<TextCell>[], prevData: UserServiceData[]): UserServiceData[] => {
+    changes.forEach((change) => {
+      const dataIndex = parseInt(change.rowId.toString());
+      const fieldName = change.columnId as keyof UserServiceData;
 
-    try {
-      const response = await bulkUpdate(modifiedRows);
-      if (response.success) {
-        alert('Changes saved successfully!');
-        setModifiedRows([]);
-        fetchData();
+      console.log(dataIndex, fieldName);
+
+      if (fieldName === 'price') {
+        const rawPrice = change.newCell.text.replace(/[Rp,.]/g, '').trim();
+        prevData[dataIndex][fieldName] = rawPrice;
       } else {
-        alert('Failed to save changes.');
+        prevData[dataIndex][fieldName] = change.newCell.text;
       }
+    });
+    return [...prevData];
+  };
+
+  // const addRow = (data: UserServiceData[], rowId: string, after: boolean): UserServiceData[] => {
+  //   const newRow: UserServiceData = {
+  //     name: '',
+  //     price: '0',
+  //   };
+
+  //   if (after) {
+  //     return [...data.slice(0, parseInt(rowId) + 1), newRow, ...data.slice(parseInt(rowId) + 1)];
+  //   } else {
+  //     return [...data.slice(0, parseInt(rowId)), newRow, ...data.slice(parseInt(rowId))];
+  //   }
+  // };
+
+  // const handleContextMenu = (
+  //   selectionRowIds: Id[],
+  //   _selectionColumnIds: Id[],
+  //   selectionMode: SelectionMode,
+  //   menuOptions: MenuOption[]
+  // ) => {
+  //   if (selectionMode === 'row') {
+  //     menuOptions = [
+  //       ...menuOptions,
+  //       {
+  //         id: 'remove-row',
+  //         label: 'Remove Row',
+  //         handler: () => {
+  //           const updatedData = userServices.filter((_, idx) => !selectionRowIds.includes(idx));
+  //           setUserServices(updatedData);
+  //         },
+  //       },
+  //       {
+  //         id: 'add-row-after',
+  //         label: 'Add Row After',
+  //         handler: () => {
+  //           const updatedData = addRow(userServices, selectionRowIds[0].toString(), true);
+  //           setUserServices(updatedData);
+  //         },
+  //       },
+  //       {
+  //         id: 'add-row-before',
+  //         label: 'Add Row Before',
+  //         handler: () => {
+  //           const updatedData = addRow(userServices, selectionRowIds[0].toString(), false);
+  //           setUserServices(updatedData);
+  //         },
+  //       },
+  //     ];
+  //   }
+
+  //   return menuOptions;
+  // };
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+
+      const modifiedServices = userServices
+        .filter((_, idx) => modifiedRows.has(idx))
+        .map((service) => ({
+          id: service.id,
+          service_name: service.name,
+          service_price: parseInt(service.price),
+        }));
+
+      console.log({
+        type,
+        modifiedServices,
+      });
+
+      if (!modifiedServices.length) {
+        alert('No data to save');
+        return;
+      }
+
+      const response = await bulkUpdate(type, modifiedServices);
+
+      if (!response.success) {
+        console.error('Error saving data:', response.message);
+        alert('Error saving data');
+      }
+
+      console.log('Data saved:', response);
+      alert('Data saved successfully');
     } catch (error) {
-      console.error('Error saving changes:', error);
-      alert('An error occurred while saving changes.');
+      console.error('Error saving data:', error);
+    } finally {
+      setLoading(false);
+      setModifiedRows(new Set());
     }
   };
 
-  const rows = getRows(data);
-  const columns = getColumns();
+  if (loading) {
+    return <p className="mt-10 mx-auto">Loading...</p>;
+  }
 
   return (
     <Container>
+      <h1 className="text-3xl font-semibold mb-6">{type.replace(/-/g, ' ').toUpperCase()}</h1>
       <ReactGrid
         rows={rows}
         columns={columns}
-        enableRangeSelection
         onCellsChanged={(changes) => {
           const textCellChanges = changes.filter(
             (change): change is CellChange<TextCell> => change.newCell.type === 'text'
           );
           handleChanges(textCellChanges);
         }}
+        // onContextMenu={handleContextMenu}
+        enableRangeSelection
+        enableRowSelection
       />
-      <button onClick={saveChanges} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
-        Save Changes
+
+      <button onClick={handleSave} className="bg-primary text-white px-4 py-2 mt-4">
+        Save
       </button>
     </Container>
   );

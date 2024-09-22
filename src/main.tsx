@@ -22,7 +22,7 @@ import UserTransaction from '@/pages/UserTransaction';
 
 import './index.css';
 import AdminLayout from './components/layouts/AdminLayout';
-import Price from './pages/admin/UserService';
+import UserService from './pages/admin/UserService';
 import CalculationResult from './pages/CalculationResult';
 
 const router = createBrowserRouter([
@@ -92,22 +92,22 @@ const router = createBrowserRouter([
         ),
       },
       // Admin route
-    ],
-  },
-  {
-    element: (
-      <ProtectedRoute requiredRoles={['ADMIN']}>
-        <AdminLayout />
-      </ProtectedRoute>
-    ),
-    children: [
       {
-        path: '/admin/dashboard',
-        element: <AdminDashboard />,
-      },
-      {
-        path: '/admin/:type',
-        element: <Price />,
+        element: (
+          <ProtectedRoute requiredRoles={['ADMIN']}>
+            <AdminLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: '/admin/dashboard',
+            element: <AdminDashboard />,
+          },
+          {
+            path: '/admin/layanan-user/:type',
+            element: <UserService />,
+          },
+        ],
       },
     ],
   },
