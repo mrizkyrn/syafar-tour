@@ -3,17 +3,15 @@ import { Outlet } from 'react-router-dom';
 
 const AdminLayout: React.FC = () => {
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <AdminSidebar />
+      <div className="relative container mx-auto max-w-7xl flex justify-center min-h-screen">
+        {/* Sidebar */}
+        <AdminSidebar />
 
-      {/* Main content area */}
-      <div className="flex-1 p-6">
-        <div className="bg-white shadow-md rounded-md p-6">
-          <Outlet />
+        {/* Main content area */}
+        <div className="flex-1 px-6 py-10">
+            <Outlet />
         </div>
       </div>
-    </div>
   );
 };
 

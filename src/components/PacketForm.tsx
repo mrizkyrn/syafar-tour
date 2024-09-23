@@ -1,79 +1,91 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { SelectInput, SliderInput, TextInput } from '@/components/Input';
-import { getAll } from '@/api/price-api';
-import { calculateTotal } from '@/api/calculation-api';
+import { getAll } from '@/api/user-service-api';
+import { create } from '@/api/calculation-api';
 import { useNavigate } from 'react-router-dom';
 
+const initialFormData = {
+  jumlahJamaah: 1,
+  tiketPesawat: '',
+  transportasi: '',
+  durasiPerjalanan: 0,
+  kotaMekkah: 0,
+  kotaMaddinah: 0,
+  hotelMekkah: '',
+  hotelMaddinah: '',
+  muthawwif: '',
+  handling: '',
+};
+
+type ServiceOption = {
+  value: string;
+  label: string;
+};
+
 const PacketForm = () => {
-  const [formData, setFormData] = useState({
-    jumlahJamaah: 1,
-    tiketPesawat: '',
-    transportasi: '',
-    durasiPerjalanan: 0,
-    kotaMekkah: 0,
-    kotaMaddinah: 0,
-    hotelMekkah: '',
-    hotelMaddinah: '',
-    muthawwif: '',
-    handling: '',
-  });
-  const [error, setError] = useState('');
+  const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const [editingField, setEditingField] = useState<'kotaMekkah' | 'kotaMaddinah' | null>(null);
+  const [options, setOptions] = useState({
+    tiketPesawatOptions: [] as ServiceOption[],
+    transportasiOptions: [] as ServiceOption[],
+    hotelMekkahOptions: [] as ServiceOption[],
+    hotelMaddinahOptions: [] as ServiceOption[],
+    muthawwifOptions: [] as ServiceOption[],
+    handlingOptions: [] as ServiceOption[],
+  });
 
   const navigate = useNavigate();
 
-  const [editingKotaMekkah, setEditingKotaMekkah] = useState(false);
-  const [editingKotaMaddinah, setEditingKotaMaddinah] = useState(false);
-  const [tiketPesawatOptions, setTiketPesawatOptions] = useState<string[]>([]);
-  const [transportasiOptions, setTransportasiOptions] = useState<string[]>([]);
-  const [hotelMekkahOptions, setHotelMekkahOptions] = useState<string[]>([]);
-  const [hotelMaddinahOptions, setHotelMaddinahOptions] = useState<string[]>([]);
-  const [muthawwifOptions, setMuthawwifOptions] = useState<string[]>([]);
-  const [handlingOptions, setHandlingOptions] = useState<string[]>([]);
-
-  const [tiketPesawatIds, setTiketPesawatIds] = useState<string[]>([]);
-  const [transportasiIds, setTransportasiIds] = useState<string[]>([]);
-  const [hotelMekkahIds, setHotelMekkahIds] = useState<string[]>([]);
-  const [hotelMaddinahIds, setHotelMaddinahIds] = useState<string[]>([]);
-  const [muthawwifIds, setMuthawwifIds] = useState<string[]>([]);
-  const [handlingIds, setHandlingIds] = useState<string[]>([]);
-
-  const getOptiions = async (name: string, setOptions: any, setIdOptions: any) => {
-    const response = await getAll(name);
-    const options = response.data.map((item: any) => item.name);
-    const ids = response.data.map((item: any) => item.id);
-    setOptions(options);
-    setIdOptions(ids);
-  };
-
   useEffect(() => {
-    getOptiions('flight', setTiketPesawatOptions, setTiketPesawatIds);
-    getOptiions('transportation', setTransportasiOptions, setTransportasiIds);
-    getOptiions('hotel-mekkah', setHotelMekkahOptions, setHotelMekkahIds);
-    getOptiions('hotel-maddinah', setHotelMaddinahOptions, setHotelMaddinahIds);
-    getOptiions('muthawwif', setMuthawwifOptions, setMuthawwifIds);
-    getOptiions('handling', setHandlingOptions, setHandlingIds);
-  }, []);
-
-  useEffect(() => {
-    if (editingKotaMekkah && formData.durasiPerjalanan && formData.kotaMekkah) {
+    if (editingField === 'kotaMekkah' && formData.durasiPerjalanan && formData.kotaMekkah !== undefined) {
       const remainingDays = formData.durasiPerjalanan - formData.kotaMekkah - 2;
       setFormData((prev) => ({
         ...prev,
         kotaMaddinah: remainingDays >= 0 ? remainingDays : 0,
       }));
     }
-  }, [formData.kotaMekkah, formData.durasiPerjalanan, editingKotaMekkah]);
+  }, [formData.kotaMekkah, formData.durasiPerjalanan, editingField]);
 
   useEffect(() => {
-    if (editingKotaMaddinah && formData.durasiPerjalanan && formData.kotaMaddinah) {
-      const remainingDays = formData.durasiPerjalanan - formData.kotaMaddinah - 2;
-      setFormData((prev) => ({
-        ...prev,
-        kotaMekkah: remainingDays >= 0 ? remainingDays : 0,
-      }));
-    }
-  }, [formData.kotaMaddinah, formData.durasiPerjalanan, editingKotaMaddinah]);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError('');
+
+        const response = await getAll();
+
+        return response.data;
+      } catch (error: any) {
+        setError(error.message || 'Terjadi kesalahan. Silakan coba lagi.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const initializeOptions = async () => {
+      const serviceResponse = await fetchData();
+
+      const filterOptions = (serviceType: string) => {
+        return serviceResponse
+          .filter((service: any) => service.service_type === serviceType)
+          .map((service: any) => ({ value: service.id, label: service.service_name }));
+      };
+
+      setOptions({
+        tiketPesawatOptions: filterOptions('Tiket Pesawat'),
+        transportasiOptions: filterOptions('Transportasi'),
+        hotelMekkahOptions: filterOptions('Hotel Makkah'),
+        hotelMaddinahOptions: filterOptions('Hotel Madinah'),
+        muthawwifOptions: filterOptions('Muthawif'),
+        handlingOptions: filterOptions('Handling'),
+      });
+    };
+
+    initializeOptions();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -84,15 +96,8 @@ const PacketForm = () => {
     }));
   };
 
-  const handleKotaMekkahChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingKotaMekkah(true);
-    setEditingKotaMaddinah(false);
-    handleChange(e);
-  };
-
-  const handleKotaMaddinahChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingKotaMaddinah(true);
-    setEditingKotaMekkah(false);
+  const handleFieldChange = (field: 'kotaMekkah' | 'kotaMaddinah') => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingField(field);
     handleChange(e);
   };
 
@@ -100,28 +105,21 @@ const PacketForm = () => {
     e.preventDefault();
     setError('');
 
-    const selectedFlightId = tiketPesawatIds[tiketPesawatOptions.indexOf(formData.tiketPesawat)];
-    const selectedHotelMekkahId = hotelMekkahIds[hotelMekkahOptions.indexOf(formData.hotelMekkah)];
-    const selectedHotelMaddinahId = hotelMaddinahIds[hotelMaddinahOptions.indexOf(formData.hotelMaddinah)];
-    const selectedTransportasiId = transportasiIds[transportasiOptions.indexOf(formData.transportasi)];
-    const selectedMuthawwifId = muthawwifIds[muthawwifOptions.indexOf(formData.muthawwif)];
-    const selectedHandlingId = handlingIds[handlingOptions.indexOf(formData.handling)];
-
     try {
       setLoading(true);
 
-      const response = await calculateTotal({
+      const response = await create({
         number_of_pax:
-          typeof formData.jumlahJamaah === 'number' ? formData.jumlahJamaah : Number(formData.jumlahJamaah),
-        transportation_id: selectedTransportasiId,
-        flight_id: selectedFlightId,
+          typeof formData.jumlahJamaah === 'number' ? formData.jumlahJamaah : parseInt(formData.jumlahJamaah),
+        transportation_id: formData.transportasi,
+        flight_id: formData.tiketPesawat,
         travel_duration: formData.durasiPerjalanan,
         mekkah_duration: formData.kotaMekkah,
-        maddinah_duration: formData.kotaMaddinah,
-        hotel_mekkah_id: selectedHotelMekkahId,
-        hotel_maddinah_id: selectedHotelMaddinahId,
-        muthawwif_id: selectedMuthawwifId,
-        handling_id: selectedHandlingId,
+        madinah_duration: formData.kotaMaddinah,
+        hotel_mekkah_id: formData.hotelMekkah,
+        hotel_madinah_id: formData.hotelMaddinah,
+        muthawif_id: formData.muthawwif,
+        handling_id: formData.handling,
       });
 
       if (response.error) {
@@ -129,7 +127,7 @@ const PacketForm = () => {
         return;
       }
 
-      navigate(`/kalkulasi/${response.data.id}`);
+      navigate(`/kalkulasi/${response.data.id}`, { state: { data: response.data } });
     } catch (error: any) {
       setError(error.message || 'Terjadi kesalahan. Silakan coba lagi.');
     } finally {
@@ -153,7 +151,7 @@ const PacketForm = () => {
       {/* Tiket Pesawat */}
       <SelectInput
         label="Tiket Pesawat"
-        options={tiketPesawatOptions}
+        options={options.tiketPesawatOptions}
         name="tiketPesawat"
         value={formData.tiketPesawat}
         onChange={handleChange}
@@ -163,7 +161,7 @@ const PacketForm = () => {
       {/* Transportasi */}
       <SelectInput
         label="Transportasi"
-        options={transportasiOptions}
+        options={options.transportasiOptions}
         name="transportasi"
         value={formData.transportasi}
         onChange={handleChange}
@@ -190,7 +188,7 @@ const PacketForm = () => {
           name="kotaMekkah"
           value={formData.kotaMekkah}
           type="number"
-          onChange={handleKotaMekkahChange}
+          onChange={handleFieldChange('kotaMekkah')}
           required
         />
 
@@ -200,7 +198,7 @@ const PacketForm = () => {
           name="kotaMaddinah"
           value={formData.kotaMaddinah}
           type="number"
-          onChange={handleKotaMaddinahChange}
+          onChange={handleFieldChange('kotaMaddinah')}
           required
         />
       </div>
@@ -208,7 +206,7 @@ const PacketForm = () => {
       {/* Hotel Mekkah */}
       <SelectInput
         label="Hotel di Mekkah"
-        options={hotelMekkahOptions}
+        options={options.hotelMekkahOptions}
         name="hotelMekkah"
         value={formData.hotelMekkah}
         onChange={handleChange}
@@ -218,7 +216,7 @@ const PacketForm = () => {
       {/* Hotel Maddinah */}
       <SelectInput
         label="Hotel di Maddinah"
-        options={hotelMaddinahOptions}
+        options={options.hotelMaddinahOptions}
         name="hotelMaddinah"
         value={formData.hotelMaddinah}
         onChange={handleChange}
@@ -228,7 +226,7 @@ const PacketForm = () => {
       {/* Muthawwif */}
       <SelectInput
         label="Muthawwif"
-        options={muthawwifOptions}
+        options={options.muthawwifOptions}
         name="muthawwif"
         value={formData.muthawwif}
         onChange={handleChange}
@@ -238,7 +236,7 @@ const PacketForm = () => {
       {/* Handling */}
       <SelectInput
         label="Handling"
-        options={handlingOptions}
+        options={options.handlingOptions}
         name="handling"
         value={formData.handling}
         onChange={handleChange}

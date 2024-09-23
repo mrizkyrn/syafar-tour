@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+    setIsMenuOpen((prev) => !prev);
   };
 
   return (
@@ -85,7 +85,7 @@ const Navbar: React.FC = () => {
           isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
         } overflow-hidden`}
       >
-        <ul className="flex flex-col gap-6 mb-7">
+        {/* <ul className="flex flex-col gap-6 mb-7">
           {navItems.map((item, index) => (
             <li key={index}>
               <NavLink
@@ -95,13 +95,13 @@ const Navbar: React.FC = () => {
                     isActive ? 'text-primary' : 'text-gray-700'
                   }`
                 }
-                onClick={toggleMenu}
+                onClick={() => console.log('clicked')}
               >
                 {item.name}
               </NavLink>
             </li>
           ))}
-        </ul>
+        </ul> */}
 
         {/* Login Button */}
         {user ? (
