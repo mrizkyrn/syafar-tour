@@ -71,7 +71,7 @@ const PacketForm = () => {
       const filterOptions = (serviceType: string) => {
         return serviceResponse
           .filter((service: any) => service.service_type === serviceType)
-          .map((service: any) => ({ value: service.id, label: service.service_name }));
+          .map((service: any) => ({ value: service.id, label: service.name }));
       };
 
       setOptions({
@@ -85,7 +85,10 @@ const PacketForm = () => {
     };
 
     initializeOptions();
+
   }, []);
+  
+  console.log(options);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
