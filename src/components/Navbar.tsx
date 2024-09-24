@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/hook/AuthProvider';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import Logo from '@/components/Logo';
@@ -22,8 +22,6 @@ const navItems: NavbarItem[] = [
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user, userLogout } = useAuth();
-
-  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
@@ -64,7 +62,7 @@ const Navbar: React.FC = () => {
               {user ? (
                 <UserDropdown user={user} onLogout={userLogout} />
               ) : (
-                <MainButton text="Masuk" onClick={() => navigate('/login')} />
+                <MainButton text="Masuk" to="/login" />
               )}
             </div>
 
@@ -107,7 +105,7 @@ const Navbar: React.FC = () => {
         {user ? (
           <UserDropdown user={user} onLogout={userLogout} />
         ) : (
-          <MainButton text="Masuk" onClick={() => navigate('/login')} />
+          <MainButton text="Masuk" to="/login" />
         )}
       </div>
     </nav>

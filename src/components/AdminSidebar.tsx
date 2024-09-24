@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { getAll } from '@/api/service-type';
+import Logo from './Logo';
 
 interface ServiceType {
   id: string;
@@ -10,7 +11,8 @@ interface ServiceType {
 
 const AdminSidebar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isUserServiceOpen, setIsUserServiceOpen] = useState(false);
+  const [isProductOpen, setIsProductOpen] = useState(false);
   const [ServiceType, setServiceType] = useState<ServiceType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,7 +22,6 @@ const AdminSidebar: React.FC = () => {
         setLoading(true);
         const response = await getAll();
         setServiceType(response.data);
-        console.log(response);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -36,7 +37,7 @@ const AdminSidebar: React.FC = () => {
   };
 
   const toggleOpen = () => {
-    setIsOpen((prev) => !prev);
+    setIsUserServiceOpen((prev) => !prev);
   };
 
   if (loading) {
@@ -45,10 +46,15 @@ const AdminSidebar: React.FC = () => {
 
   return (
     <div
-      className={`absolute top-0 left-0 bottom-0 md:relative max-w-72 bg-white text-dark flex flex-col border-r border-gray-300 ${
-        isSidebarOpen ? 'w-72' : 'w-14'
+      className={`absolute top-0 left-0 bottom-0 md:relative max-w-52 bg-white text-dark flex flex-col border-r border-gray-300 ${
+        isSidebarOpen ? 'w-52' : 'w-14'
       }`}
     >
+      {/* Logo */}
+      <Link to="/" className="flex justify-center items-center h-16 border-b border-gray-300 mt-5 cursor-pointer"> 
+        {isSidebarOpen && <Logo className='w-36' />}
+      </Link>
+
       {/* Sidebar toggle */}
       <button
         onClick={() => setIsSidebarOpen((prev) => !prev)}
@@ -56,17 +62,17 @@ const AdminSidebar: React.FC = () => {
       >
         {isSidebarOpen ? (
           <div className="flex justify-start items-center">
-            <FaAngleLeft className="text-3xl" />
-            <span className="text-lg font-medium ml-3">Admin Dashboard</span>
+            <FaAngleLeft className="text-xl" />
+            <span className="font-medium ml-3">Admin Dashboard</span>
           </div>
         ) : (
-          <FaAngleRight className="text-3xl" />
+          <FaAngleRight className="text-xl" />
         )}
       </button>
 
       {/* Navigation links */}
       {isSidebarOpen && (
-        <nav className="flex-1 py-6 w-full">
+        <nav className="flex-1 w-full text-sm">
           <ul className="flex flex-col">
             {/* Dashboard */}
             <li>
@@ -82,19 +88,17 @@ const AdminSidebar: React.FC = () => {
               </NavLink>
             </li>
 
-            {/* <hr className="border-t border-gray-300 my-2" /> */}
-
             {/* Layanan User */}
-            <li className="mb-4">
+            <li>
               <button
                 onClick={toggleOpen}
                 className="flex w-full px-4 py-3 justify-between items-center text-dark hover:bg-gray-200 border-b border-gray-300"
                 aria-haspopup="true"
-                aria-expanded={isOpen}
+                aria-expanded={isUserServiceOpen}
               >
-                Harga Layanan User {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+                Harga Layanan User {isUserServiceOpen ? <FaChevronUp /> : <FaChevronDown />}
               </button>
-              {isOpen && (
+              {isUserServiceOpen && (
                 <ul className="">
                   {ServiceType.map((service) => (
                     <li key={service.id}>
@@ -113,6 +117,60 @@ const AdminSidebar: React.FC = () => {
                 </ul>
               )}
             </li>
+
+            {/* Product */}
+            <li>
+              <button
+                onClick={() => setIsProductOpen((prev) => !prev)}
+                className="flex w-full px-4 py-3 justify-between items-center text-dark hover:bg-gray-200 border-b border-gray-300"
+                aria-haspopup="true"
+                aria-expanded={isProductOpen}
+              >
+                Produk {isProductOpen ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              {isProductOpen && (
+                <ul className="">
+                  <li>
+                    <NavLink
+                      to="/admin/produk/list"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Produk List
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/produk/kategori"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Kategori
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/produk/tambah"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Tambah Produk
+                    </NavLink>
+                  </li>
+
+                </ul>
+              )}
+            </li>
+              
           </ul>
         </nav>
       )}

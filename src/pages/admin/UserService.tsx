@@ -187,13 +187,7 @@ const UserService: React.FC = () => {
     }));
 
     const deletedData = Array.from(deletedRows);
-
-    console.log({
-      type,
-      modifiedData,
-      deletedRows: Array.from(deletedRows),
-    });
-
+    
     if (!modifiedRows.size && !deletedRows.size) {
       alert('No data to save');
       return;

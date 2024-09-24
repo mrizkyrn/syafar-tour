@@ -1,19 +1,22 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Link } from 'react-router-dom';
+
 interface MainButtonProps {
   text: string;
-  onClick: () => void;
+  to?: string;
   [key: string]: any;
 }
 
-const MainButton: React.FC<MainButtonProps> = ({ text, onClick, ...props }) => {
+const MainButton: React.FC<MainButtonProps> = ({ text, to = '', ...props }) => {
   return (
-    <button
-      className="bg-primary text-white text-sm md:text-base px-6 sm:px-10 py-2 rounded-md hover:bg-primaryDark transition-colors duration-300"
-      onClick={onClick}
+    // <Link to="/add">
+    <Link
+      to={to}
+      className="bg-primary text-center text-white text-sm md:text-base px-6 sm:px-10 py-2 rounded-md hover:bg-primaryDark transition-colors duration-300"
       {...props}
     >
       {text}
-    </button>
+    </Link>
+    // </Link>
   );
 };
 

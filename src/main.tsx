@@ -12,18 +12,20 @@ import Home from '@/pages/Homepage';
 import Login from '@/pages/Login';
 import NotAuthorized from '@/pages/NotAuthorized';
 import Product from '@/pages/Product';
-import ProductPaket from '@/pages/ProductPacket';
-import ProductVisa from '@/pages/ProductVisa';
-import ProductLA from '@/pages/ProductLA';
 import Packet from '@/pages/Packet';
 import Register from '@/pages/Register';
 import UserProfile from '@/pages/UserProfile';
 import UserTransaction from '@/pages/UserTransaction';
 
 import './index.css';
-import AdminLayout from './components/layouts/AdminLayout';
-import UserService from './pages/admin/UserService';
-import CalculationResult from './pages/CalculationResult';
+import AdminLayout from '@/components/layouts/AdminLayout';
+import UserService from '@/pages/admin/UserService';
+import CalculationResult from '@/pages/CalculationResult';
+import DetailProduct from '@/pages/DetailProduct';
+import ProductList from '@/pages/admin/ProductLIst';
+import CreateProduct from '@/pages/admin/CreateProduct';
+import ProductCategory from './pages/admin/ProductCategory';
+// import UpdateProduct from './pages/admin/UpdateProduct';
 
 const router = createBrowserRouter([
   {
@@ -48,20 +50,6 @@ const router = createBrowserRouter([
       {
         path: '/produk',
         element: <Product />,
-        children: [
-          {
-            index: true,
-            element: <ProductPaket />,
-          },
-          {
-            path: 'visa',
-            element: <ProductVisa />,
-          },
-          {
-            path: 'hotel',
-            element: <ProductLA />,
-          },
-        ],
       },
       {
         path: '/paket',
@@ -70,6 +58,10 @@ const router = createBrowserRouter([
       {
         path: '/faq',
         element: <Faq />,
+      },
+      {
+        path: '/produk/detail',
+        element: <DetailProduct />,
       },
       {
         path: 'kalkulasi/:id',
@@ -91,24 +83,40 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
       },
-      // Admin route
+    ],
+  },
+  // Admin route
+  {
+    element: (
+      <ProtectedRoute requiredRoles={['ADMIN']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
       {
-        element: (
-          <ProtectedRoute requiredRoles={['ADMIN']}>
-            <AdminLayout />
-          </ProtectedRoute>
-        ),
-        children: [
-          {
-            path: '/admin/dashboard',
-            element: <AdminDashboard />,
-          },
-          {
-            path: '/admin/layanan-user/:type',
-            element: <UserService />,
-          },
-        ],
+        path: '/admin/dashboard',
+        element: <AdminDashboard />,
       },
+      {
+        path: '/admin/layanan-user/:type',
+        element: <UserService />,
+      },
+      {
+        path: '/admin/produk/list',
+        element: <ProductList />,
+      },
+      {
+        path: '/admin/produk/tambah',
+        element: <CreateProduct />,
+      },
+      {
+        path: '/admin/produk/kategori',
+        element: <ProductCategory />,
+      },
+      // {
+      //   path: '/admin/produk/:id',
+      //   element: <UpdateProduct />,
+      // }
     ],
   },
   {

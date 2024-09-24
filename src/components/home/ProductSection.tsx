@@ -1,10 +1,22 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Product } from '@/types/ProductType';
+import { getAll } from '@/api/product-api';
 import Container from '@/components/Container';
 import ProductCard from '@/components/cards/ProductCard';
-import { Products } from '@/datas';
 
 const ProductSection: React.FC = () => {
   const navigate = useNavigate();
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await getAll();
+      setProducts(response.data);
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <>
@@ -23,10 +35,13 @@ const ProductSection: React.FC = () => {
           <div className="flex flex-col justify-center items-center gap-9 mb-12">
             <h2 className="text-xl md:text-3xl font-semibold text-dark text-start w-full">Paket Umrah</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14">
-              {Products.filter((product) => product.category === 'Private').map((product, index) => (
-                <ProductCard key={index} product={product} />
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
+              {products
+                .filter((product) => product.categories.includes('Paket Umroh'))
+                .slice(0, 3)
+                .map((product, index) => (
+                  <ProductCard key={index} product={product} />
+                ))}
             </div>
 
             <button
@@ -40,15 +55,18 @@ const ProductSection: React.FC = () => {
           <div className="flex flex-col justify-center items-center gap-9">
             <h2 className="text-xl md:text-3xl font-semibold text-dark text-start w-full">Visa Umrah</h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14">
-              {Products.filter((product) => product.category === 'Visa').map((product, index) => (
-                <ProductCard key={index} product={product} />
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
+              {products
+                .filter((product) => product.categories.includes('Visa Umroh'))
+                .slice(0, 3)
+                .map((product, index) => (
+                  <ProductCard key={index} product={product} />
+                ))}
             </div>
 
             <button
               className="px-12 text-xs md:text-base border border-dark text-dark font-semibold py-3 rounded-lg hover:bg-dark hover:text-white transition-all duration-200"
-              onClick={() => navigate('/produk/visa')}
+              onClick={() => navigate('/produk')}
             >
               Selengkapnya
             </button>
