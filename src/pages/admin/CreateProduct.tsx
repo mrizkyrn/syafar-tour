@@ -190,7 +190,7 @@ const CreateProduct: React.FC = () => {
         return;
       }
 
-      navigate('/admin/produk');
+      navigate('/admin/produk/list');
     } catch (error) {
       console.error('Error creating product:', error);
     }
