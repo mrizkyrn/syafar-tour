@@ -7,7 +7,6 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  console.log(product);
   return (
     <div className="relative w-full flex flex-col gap-4 p-5 bg-white shadow-md">
       <img
@@ -29,7 +28,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </p>
       </div>
 
-      <MainButton text="Selengkapnya" />
+      <MainButton text="Selengkapnya" to={`/produk/${product.id}`} />
     </div>
   );
 };

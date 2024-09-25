@@ -25,6 +25,7 @@ import DetailProduct from '@/pages/DetailProduct';
 import ProductList from '@/pages/admin/ProductLIst';
 import CreateProduct from '@/pages/admin/CreateProduct';
 import ProductCategory from './pages/admin/ProductCategory';
+import ProductOrder from './pages/admin/ProductOrder';
 // import UpdateProduct from './pages/admin/UpdateProduct';
 
 const router = createBrowserRouter([
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
         element: <Faq />,
       },
       {
-        path: '/produk/detail',
+        path: '/produk/:id',
         element: <DetailProduct />,
       },
       {
@@ -116,13 +117,21 @@ const router = createBrowserRouter([
       // {
       //   path: '/admin/produk/:id',
       //   element: <UpdateProduct />,
-      // }
+      // },
+      {
+        path: '/admin/order',
+        element: <ProductOrder />,
+      }
     ],
   },
   {
     path: '/not-authorized',
     element: <NotAuthorized />,
   },
+  {
+    path: '*',
+    element: <div>Not Found</div>,
+  }
 ]);
 
 createRoot(document.getElementById('root')!).render(

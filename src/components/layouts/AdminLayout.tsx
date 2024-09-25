@@ -8,7 +8,7 @@ const AdminLayout: React.FC = () => {
         <AdminSidebar />
 
         {/* Main content area */}
-        <div className="flex-1 px-6 py-10">
+        <div className="flex-1 px-6 py-10 overflow-x-auto">
             <Outlet />
         </div>
       </div>

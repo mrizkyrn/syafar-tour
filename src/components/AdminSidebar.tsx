@@ -51,8 +51,8 @@ const AdminSidebar: React.FC = () => {
       }`}
     >
       {/* Logo */}
-      <Link to="/" className="flex justify-center items-center h-16 border-b border-gray-300 mt-5 cursor-pointer"> 
-        {isSidebarOpen && <Logo className='w-36' />}
+      <Link to="/" className="flex justify-center items-center h-16 border-b border-gray-300 mt-5 cursor-pointer">
+        {isSidebarOpen && <Logo className="w-36" />}
       </Link>
 
       {/* Sidebar toggle */}
@@ -166,11 +166,23 @@ const AdminSidebar: React.FC = () => {
                       Tambah Produk
                     </NavLink>
                   </li>
-
                 </ul>
               )}
             </li>
-              
+
+            {/* Order */}
+            <li>
+              <NavLink
+                to="/admin/order"
+                className={({ isActive }) =>
+                  `w-full block px-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                    isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                  }`
+                }
+              >
+                Order
+              </NavLink>
+            </li>
           </ul>
         </nav>
       )}

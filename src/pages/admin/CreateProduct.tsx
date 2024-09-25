@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { createProduct } from '@/api/product-api';
 import { getAllCategory } from '@/api/category-api';
 import { CreateProductRequest } from '@/types/ProductType';
+import { CiCirclePlus, CiCircleRemove } from 'react-icons/ci';
 import Select from 'react-select';
+import formatPrice from '@/utils/formatPrice';
 
 type Category = {
   id: string;
@@ -58,10 +60,14 @@ const CreateProduct: React.FC = () => {
   // Handle input field changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    if (name === 'price') {
+      const rawPrice = value.replace(/[Rp,.]/g, '').trim();
+      const price = rawPrice ? parseInt(rawPrice) : '';
+      setFormData((prev) => ({ ...prev, price: price || 0 }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   // Handle category selection changes using react-select
@@ -76,7 +82,14 @@ const CreateProduct: React.FC = () => {
   // Handle variation input changes
   const handleVariationChange = (index: number, key: 'name' | 'price', value: string) => {
     const updatedVariations = [...(formData.variations ?? [])];
-    updatedVariations[index] = { ...updatedVariations[index], [key]: value };
+    if (key === 'price') {
+      const rawPrice = value.replace(/[Rp,.]/g, '').trim();
+      const price = rawPrice ? rawPrice : '';
+
+      updatedVariations[index] = { ...updatedVariations[index], [key]: price };
+    } else {
+      updatedVariations[index] = { ...updatedVariations[index], [key]: value };
+    }
     setFormData((prev) => ({
       ...prev,
       variations: updatedVariations,
@@ -130,7 +143,7 @@ const CreateProduct: React.FC = () => {
   const addExclude = () => {
     setFormData((prev) => ({
       ...prev,
-      excludes: [...(prev.includes ?? []), ''],
+      excludes: [...(prev.excludes ?? []), ''],
     }));
   };
 
@@ -197,13 +210,13 @@ const CreateProduct: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 md:gap-8" encType="multipart/form-data">
+    <div className="mx-auto p-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 md:gap-7" encType="multipart/form-data">
         <h1 className="text-3xl font-bold mb-4">Create Product</h1>
 
         {/* Thumbnail */}
         <div>
-          <label className="block text-sm font-medium">Thumbnail</label>
+          <label className="block mb-2 font-medium">Thumbnail</label>
           <input
             type="file"
             name="thumbnail"
@@ -216,7 +229,7 @@ const CreateProduct: React.FC = () => {
 
         {/* Product Name */}
         <div>
-          <label className="block text-sm font-medium">Name</label>
+          <label className="block mb-2 font-medium">Name</label>
           <input
             type="text"
             name="name"
@@ -229,7 +242,7 @@ const CreateProduct: React.FC = () => {
 
         {/* Description */}
         <div>
-          <label className="block text-sm font-medium">Description</label>
+          <label className="block mb-2 font-medium">Description</label>
           <textarea
             name="description"
             value={formData.description}
@@ -241,11 +254,11 @@ const CreateProduct: React.FC = () => {
 
         {/* Price */}
         <div>
-          <label className="block text-sm font-medium">Price</label>
+          <label className="block mb-2 font-medium">Price</label>
           <input
-            type="number"
+            type="text"
             name="price"
-            value={formData.price}
+            value={formatPrice(formData.price)}
             onChange={handleInputChange}
             className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
             required
@@ -254,7 +267,7 @@ const CreateProduct: React.FC = () => {
 
         {/* Category Dropdown (Multiple Select) */}
         <div>
-          <label className="block text-sm font-medium">Categories</label>
+          <label className="block mb-2 font-medium">Categories</label>
           <Select
             isMulti
             options={categories.map((category) => ({ value: category.id, label: category.name }))}
@@ -268,8 +281,8 @@ const CreateProduct: React.FC = () => {
         </div>
 
         {/* Images */}
-        <div>
-          <label className="block text-sm font-medium">Images</label>
+        {/* <div>
+          <label className="block mb-2 font-medium">Images</label>
           <input
             type="file"
             name="images"
@@ -278,106 +291,88 @@ const CreateProduct: React.FC = () => {
             onChange={handleFileChange}
             className="mt-1 block w-full border border-gray-300 rounded-md"
           />
-        </div>
+        </div> */}
 
         {/* Variations Section */}
-        <div>
-          <label className="block text-sm font-medium">Variations</label>
-          {formData.variations?.map((variation, index) => (
-            <div key={index} className="flex gap-4 mb-2">
-              <input
-                type="text"
-                placeholder="Variation Name"
-                value={variation.name}
-                onChange={(e) => handleVariationChange(index, 'name', e.target.value)}
-                className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
-                required
-              />
-              <input
-                type="number"
-                placeholder="Variation Price"
-                value={variation.price}
-                onChange={(e) => handleVariationChange(index, 'price', e.target.value)}
-                className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => removeVariation(index)}
-                className="mt-1 bg-red-500 text-white py-1 px-2 rounded-md hover:bg-red-600"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addVariation}
-            className="mt-2 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
-          >
-            Add Variation
+        <div className="flex justify-between items-start">
+          <div>
+            <label className="block font-medium mb-3">Variations</label>
+            {formData.variations?.map((variation, index) => (
+              <div key={index} className="flex gap-4 mb-3">
+                <input
+                  type="text"
+                  placeholder="Variation Name"
+                  value={variation.name}
+                  onChange={(e) => handleVariationChange(index, 'name', e.target.value)}
+                  className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Variation Price"
+                  value={formatPrice(variation.price)}
+                  onChange={(e) => handleVariationChange(index, 'price', e.target.value)}
+                  className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
+                  required
+                />
+                <button type="button" onClick={() => removeVariation(index)}>
+                  <CiCircleRemove className="inline-block text-4xl" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <button type="button" onClick={addVariation}>
+            <CiCirclePlus className="inline-block text-4xl" />
           </button>
         </div>
 
         {/* Includes Section */}
-        <div>
-          <label className="block text-sm font-medium">Includes</label>
-          {formData.includes?.map((include, index) => (
-            <div key={index} className="flex gap-4 mb-2">
-              <input
-                type="text"
-                placeholder="Include Item"
-                value={include}
-                onChange={(e) => handleIncludeChange(index, e.target.value)}
-                className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => removeInclude(index)}
-                className="mt-1 bg-red-500 text-white py-1 px-2 rounded-md hover:bg-red-600"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addInclude}
-            className="mt-2 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
-          >
-            Add Include
+        <div className="flex justify-between items-start">
+          <div>
+            <label className="block mb-2 font-medium">Includes</label>
+            {formData.includes?.map((include, index) => (
+              <div key={index} className="flex gap-4 mb-2">
+                <input
+                  type="text"
+                  placeholder="Include Item"
+                  value={include}
+                  onChange={(e) => handleIncludeChange(index, e.target.value)}
+                  className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
+                  required
+                />
+                <button type="button" onClick={() => removeInclude(index)}>
+                  <CiCircleRemove className="inline-block text-4xl" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <button type="button" onClick={addInclude}>
+            <CiCirclePlus className="inline-block text-4xl" />
           </button>
         </div>
 
         {/* Excludes Section */}
-        <div>
-          <label className="block text-sm font-medium">Excludes</label>
-          {formData.excludes?.map((exclude, index) => (
-            <div key={index} className="flex gap-4 mb-2">
-              <input
-                type="text"
-                placeholder="Exclude Item"
-                value={exclude}
-                onChange={(e) => handleExcludeChange(index, e.target.value)}
-                className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => removeExclude(index)}
-                className="mt-1 bg-red-500 text-white py-1 px-2 rounded-md hover:bg-red-600"
-              >
-                Remove
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addExclude}
-            className="mt-2 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
-          >
-            Add Exclude
+        <div className="flex justify-between items-start">
+          <div>
+            <label className="block mb-2 font-medium">Excludes</label>
+            {formData.excludes?.map((exclude, index) => (
+              <div key={index} className="flex gap-4 mb-2">
+                <input
+                  type="text"
+                  placeholder="Exclude Item"
+                  value={exclude}
+                  onChange={(e) => handleExcludeChange(index, e.target.value)}
+                  className="mt-1 p-2 block border border-gray-300 rounded-md w-full"
+                  required
+                />
+                <button type="button" onClick={() => removeExclude(index)}>
+                  <CiCircleRemove className="inline-block text-4xl" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <button type="button" onClick={addExclude}>
+            <CiCirclePlus className="inline-block text-4xl" />
           </button>
         </div>
 

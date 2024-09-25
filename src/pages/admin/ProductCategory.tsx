@@ -62,8 +62,8 @@ const ProductCategory: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-2xl font-bold mb-6 text-center">Category Management</h1>
+    <div className="mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-4">Category Management</h1>
 
       {/* Create new category form */}
       <div className="mb-8 p-4 border rounded-lg bg-gray-100 shadow-md">
