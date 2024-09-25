@@ -26,7 +26,7 @@ import ProductList from '@/pages/admin/ProductLIst';
 import CreateProduct from '@/pages/admin/CreateProduct';
 import ProductCategory from './pages/admin/ProductCategory';
 import ProductOrder from './pages/admin/ProductOrder';
-// import UpdateProduct from './pages/admin/UpdateProduct';
+import UpdateProduct from './pages/admin/UpdateProduct';
 
 const router = createBrowserRouter([
   {
@@ -114,10 +114,10 @@ const router = createBrowserRouter([
         path: '/admin/produk/kategori',
         element: <ProductCategory />,
       },
-      // {
-      //   path: '/admin/produk/:id',
-      //   element: <UpdateProduct />,
-      // },
+      {
+        path: '/admin/produk/:id',
+        element: <UpdateProduct />,
+      },
       {
         path: '/admin/order',
         element: <ProductOrder />,

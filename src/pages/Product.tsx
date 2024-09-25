@@ -26,11 +26,7 @@ const Product: React.FC = () => {
 
     // Replace the filter condition based on your actual product data structure
     const filtered = products.filter((product) => {
-      if (category === 'Paket Umroh') return product.categories.includes('Paket Umroh');
-      if (category === 'Visa Umroh') return product.categories.includes('Visa Umroh');
-      if (category === 'Paket Hotel') return product.categories.includes('Paket Hotel');
-
-      return false;
+      return product.categories.some((cat) => cat.name === category);
     });
 
     setFilteredProducts(filtered);

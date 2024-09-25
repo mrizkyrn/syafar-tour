@@ -377,7 +377,10 @@ const CreateProduct: React.FC = () => {
         </div>
 
         {/* Submit Button */}
-        <button type="submit" className="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+        <button
+          type="submit"
+          className="bg-primary text-center text-white text-sm md:text-base px-6 sm:px-10 py-2 rounded-md hover:bg-primaryDark transition-colors duration-300"
+        >
           Create Product
         </button>
       </form>

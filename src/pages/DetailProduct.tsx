@@ -77,7 +77,7 @@ const DetailProduct: React.FC = () => {
     try {
       const order = {
         product_id: product.id,
-        variation: selectedVariation !== null ? product.variations[selectedVariation].name : null,
+        variation: selectedVariation !== null ? product.variations[selectedVariation].name : "",
         departure: selectedDate.toISOString(),
         number_of_pax: participantCount,
         per_pax_price: selectedVariation !== null ? Number(product.variations[selectedVariation].price) : product.price,
@@ -88,7 +88,7 @@ const DetailProduct: React.FC = () => {
       };
 
       const response = await createOrder(order);
-      
+
       if (!response.success) {
         console.error('Error creating order:', response.message);
         return;
@@ -246,7 +246,10 @@ const DetailProduct: React.FC = () => {
                   <div className="w-full">
                     <button
                       className="bg-dark text-white px-4 py-2 rounded-md w-full"
-                      onClick={() => setIsPaymentOpen(true)}
+                      onClick={() => {
+                        setIsPaymentOpen(true);
+                        setIsParticipantOpen(false);
+                      }}
                     >
                       Cek Ketersediaan
                     </button>

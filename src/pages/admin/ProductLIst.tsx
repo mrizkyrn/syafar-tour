@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { getAll, deleteProduct } from '@/api/product-api';
 import { FaEdit, FaTrashAlt } from 'react-icons/fa';
-import { Product } from '@/types/ProductType';
+import { Product, Category } from '@/types/ProductType';
 import formatPrice from '@/utils/formatPrice';
+import { Link } from 'react-router-dom';
 
 const ProductList: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<(Product & { categories: Category[] })[]>([]);
 
   // Fetch products
   useEffect(() => {
@@ -25,7 +26,7 @@ const ProductList: React.FC = () => {
 
     setProducts(products.filter((product) => product.id !== id));
   };
-
+  console.log(products[0]);
   return (
     <div className="mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Product List</h1>
@@ -76,18 +77,13 @@ const ProductList: React.FC = () => {
                     <p className="text-gray-500">No variations</p>
                   )}
                 </td>
-                <td className="px-6 py-2 border-b">{product.categories.join(', ')}</td>
+                <td className="px-6 py-2 border-b">{product.categories.map((category: Category) => category.name).join(', ')}</td>
 
                 {/* Actions */}
                 <td className="flex justify-center items-center px-6 py-2 border-b">
-                  <button
-                    onClick={() => {
-                      alert("Edit product feature is not available yet.");
-                    }}
-                    className="text-blue-500 hover:underline mr-4"
-                  >
+                  <Link to={`/admin/produk/${product.id}`} className="text-blue-500 hover:underline mr-4">
                     <FaEdit />
-                  </button>
+                  </Link>
                   <button onClick={() => handleDeleteProduct(product.id)} className="text-red-500 hover:underline">
                     <FaTrashAlt />
                   </button>

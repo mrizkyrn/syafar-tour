@@ -4,7 +4,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  categories: string[];
+  categories: Category[];
   variations: Variation[];
   images: string[];
   includes: string[];
@@ -24,6 +24,11 @@ export interface CreateProductRequest {
   includes?: string[];
   excludes?: string[];
 };
+
+export interface Category {
+  id: string;
+  name: string;
+}
 
 interface Variation {
   name: string;
