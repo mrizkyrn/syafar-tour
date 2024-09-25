@@ -26,7 +26,7 @@ const ProductList: React.FC = () => {
 
     setProducts(products.filter((product) => product.id !== id));
   };
-  console.log(products[0]);
+  
   return (
     <div className="mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Product List</h1>

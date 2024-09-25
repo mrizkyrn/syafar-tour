@@ -37,10 +37,10 @@ const ProductSection: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
               {products
-                ?.filter((product) => product.categories.includes('Paket Umroh'))
+                ?.filter((product) => product.categories.some((category) => category.name === 'Paket Umroh'))
                 .slice(0, 3)
-                .map((product, index) => (
-                  <ProductCard key={index} product={product} />
+                .map((product) => (
+                  <ProductCard key={product.id} product={product} />
                 ))}
             </div>
 
@@ -57,10 +57,10 @@ const ProductSection: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
               {products
-                ?.filter((product) => product.categories.includes('Visa Umroh'))
+                ?.filter((product) => product.categories.some((category) => category.name === 'Visa Umroh'))
                 .slice(0, 3)
-                .map((product, index) => (
-                  <ProductCard key={index} product={product} />
+                .map((product) => (
+                  <ProductCard key={product.id} product={product} />
                 ))}
             </div>
 

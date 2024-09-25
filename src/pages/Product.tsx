@@ -9,7 +9,6 @@ const Product: React.FC = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
   const [activeCategory, setActiveCategory] = useState<'Paket Umroh' | 'Visa Umroh' | 'Paket Hotel'>('Paket Umroh');
-  console.log(products);
 
   useEffect(() => {
     const fetchProducts = async () => {

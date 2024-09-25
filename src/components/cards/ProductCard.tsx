@@ -20,7 +20,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <p className="absolute right-0 text-xs md:text-sm bg-primary text-white px-6 py-1 rounded-s-full w-max">
             Best Seller
           </p>
-          <p className="text-gray-700 text-xs md:text-sm">{product.categories.join(' • ')}</p>
+          <p className="text-gray-700 text-xs md:text-sm">
+            {product.categories.map((category) => category.name).join(' • ')}
+          </p>
         </div>
         <h1 className="text-lg md:text-xl font-semibold">{product.name}</h1>
         <p className="text-gray-800">

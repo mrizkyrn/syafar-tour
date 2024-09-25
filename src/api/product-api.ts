@@ -36,9 +36,6 @@ export const createProduct = async (product: any) => {
 };
 
 export const update = async (id: string, product: any) => {
-  for (const value of product.values()) {
-    console.log(value);
-  }
   try {
     const response = await api.patch(`/${id}`, product);
     return response.data;
