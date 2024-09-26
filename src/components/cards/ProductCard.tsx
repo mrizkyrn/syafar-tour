@@ -1,18 +1,19 @@
 import React from 'react';
 import MainButton from '../MainButton';
 import { Product } from '@/types/ProductType';
+import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  return (
-    <div className="relative w-full flex flex-col gap-4 p-5 bg-white shadow-md">
+  return (// move to up when hover
+    <Link to={`/produk/${product.id}`} className="relative w-full flex flex-col gap-4 p-5 bg-white shadow-md hover:shadow-lg hover:-translate-y-3 transition duration-300 ease-in-out">
       <img
         src={import.meta.env.VITE_BASE_URL + product.thumbnail}
         alt={product.name}
-        className="object-cover rounded-lg w-full h-full lg:h-auto"
+        className="object-cover rounded-lg w-full h-full lg:w-auto"
       />
 
       <div className="flex flex-col justify-between gap-2 md:gap-3">
@@ -31,7 +32,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
 
       <MainButton text="Selengkapnya" to={`/produk/${product.id}`} />
-    </div>
+    </Link>
   );
 };
 

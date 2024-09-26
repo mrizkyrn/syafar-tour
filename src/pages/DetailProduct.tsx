@@ -7,6 +7,7 @@ import { Product } from '@/types/ProductType';
 import { FaCheck, FaTimes, FaAngleDown, FaAngleUp, FaUsers } from 'react-icons/fa';
 import Container from '@/components/Container';
 import formatPrice from '@/utils/formatPrice';
+import parse from 'html-react-parser';
 
 const DetailProduct: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -77,7 +78,7 @@ const DetailProduct: React.FC = () => {
     try {
       const order = {
         product_id: product.id,
-        variation: selectedVariation !== null ? product.variations[selectedVariation].name : "",
+        variation: selectedVariation !== null ? product.variations[selectedVariation].name : '',
         departure: selectedDate.toISOString(),
         number_of_pax: participantCount,
         per_pax_price: selectedVariation !== null ? Number(product.variations[selectedVariation].price) : product.price,
@@ -166,7 +167,7 @@ const DetailProduct: React.FC = () => {
               {/* Description Section */}
               <div className="mb-4 md:mb-8">
                 <h2 className="text-lg md:text-2xl font-semibold mb-2 md:mb-4">Deskripsi</h2>
-                <p className="text-sm md:text-xl text-gray-700 leading-5 md:leading-8">{product.description}</p>
+                <div className="text-dark list description">{parse(product.description)}</div>
               </div>
 
               {/* Include Exclude */}

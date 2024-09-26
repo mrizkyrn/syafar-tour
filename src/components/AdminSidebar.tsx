@@ -73,7 +73,7 @@ const AdminSidebar: React.FC = () => {
       {/* Navigation links */}
       {isSidebarOpen && (
         <nav className="flex-1 w-full text-sm">
-          <ul className="flex flex-col">
+          <ul className="flex flex-col list-none ">
             {/* Dashboard */}
             <li>
               <NavLink
@@ -99,7 +99,7 @@ const AdminSidebar: React.FC = () => {
                 Harga Layanan User {isUserServiceOpen ? <FaChevronUp /> : <FaChevronDown />}
               </button>
               {isUserServiceOpen && (
-                <ul className="">
+                <ul className="list-none">
                   {ServiceType.map((service) => (
                     <li key={service.id}>
                       <NavLink
@@ -129,7 +129,7 @@ const AdminSidebar: React.FC = () => {
                 Produk {isProductOpen ? <FaChevronUp /> : <FaChevronDown />}
               </button>
               {isProductOpen && (
-                <ul className="">
+                <ul className="list-none">
                   <li>
                     <NavLink
                       to="/admin/produk/list"

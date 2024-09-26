@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { get, update } from '@/api/product-api';
 import { getAllCategory } from '@/api/category-api';
+import { CiCirclePlus, CiCircleRemove } from 'react-icons/ci';
+import ReactQuill from 'react-quill';
 import Select from 'react-select';
 import formatPrice from '@/utils/formatPrice';
-import { CiCirclePlus, CiCircleRemove } from 'react-icons/ci';
+
+import 'react-quill/dist/quill.snow.css';
 
 type Category = {
   id: string;
@@ -309,12 +312,11 @@ const UpdateProduct: React.FC = () => {
         {/* Description */}
         <div>
           <label className="block mb-2 font-medium">Description</label>
-          <textarea
-            name="description"
+          <ReactQuill
             value={formData.description}
-            onChange={handleInputChange}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            required
+            
+            onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
+            className="mt-1 block w-full border border-gray-300 rounded-md"
           />
         </div>
 

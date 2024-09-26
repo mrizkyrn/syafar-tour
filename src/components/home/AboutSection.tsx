@@ -1,10 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import Container from '@/components/Container';
-import MainButton from '@/components/MainButton';
 
 const AboutSection: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <section className="py-16">
       <Container>
@@ -21,7 +17,6 @@ const AboutSection: React.FC = () => {
               disesuaikan dengan kebutuhan Anda. Didukung oleh tim profesional, kami memastikan kenyamanan, keamanan,
               dan kemudahan perjalanan anda.
             </p>
-          <MainButton text="Selengkapnya" onClick={() => navigate('/tentang')} />
           </div>
         </div>
       </Container>

@@ -5,7 +5,6 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import MainLayout from '@/components/layouts/MainLayout';
 import ProtectedRoute from '@/components/layouts/ProtectedRoute';
 import AuthProvider from '@/hook/AuthProvider';
-import About from '@/pages/About';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import Faq from '@/pages/Faq';
 import Home from '@/pages/Homepage';
@@ -43,10 +42,6 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />,
-      },
-      {
-        path: '/tentang',
-        element: <About />,
       },
       {
         path: '/produk',

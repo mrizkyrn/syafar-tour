@@ -8,3 +8,13 @@
 html {
   scroll-behavior: smooth;
 }
+
+.description ol {
+  list-style-type: decimal;
+  margin-left: 1rem;
+}
+
+.description li {
+  list-style-type: disc;
+  margin-left: 1rem;
+}

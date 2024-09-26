@@ -95,7 +95,7 @@ const ProductCategory: React.FC = () => {
       {/* List categories */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Categories</h2>
-        <ul className="space-y-4">
+        <ul className="space-y-4 list-none">
           {categories.map((category) => (
             <li key={category.id} className="p-4 border rounded-lg shadow-md flex justify-between items-center">
               <div>

@@ -22,15 +22,10 @@ const Footer: React.FC = () => {
             {/* Links */}
             <div className="col-span-1">
               <h2 className="font-bold text-lg mb-3 lg:mb-7 uppercase">Tautan</h2>
-              <ul className="flex flex-col gap-3 lg:gap-5">
+              <ul className="flex flex-col gap-3 lg:gap-5 list-none">
                 <li>
                   <Link to="/" className="text-black text-sm">
                     Home
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/tentang" className="text-black text-sm">
-                    Tentang
                   </Link>
                 </li>
                 <li>
@@ -54,7 +49,7 @@ const Footer: React.FC = () => {
             {/* Policies */}
             <div className="col-span-1">
               <h2 className="font-bold text-lg mb-3 lg:mb-7 uppercase">Kebijakan</h2>
-              <ul className="flex flex-col gap-3 lg:gap-5">
+              <ul className="flex flex-col gap-3 lg:gap-5 list-none">
                 <li>
                   <a href="#" className="text-black text-sm">
                     Kebijakan Privasi

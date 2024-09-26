@@ -4,8 +4,11 @@ import { createProduct } from '@/api/product-api';
 import { getAllCategory } from '@/api/category-api';
 import { CreateProductRequest } from '@/types/ProductType';
 import { CiCirclePlus, CiCircleRemove } from 'react-icons/ci';
+import ReactQuill from 'react-quill';
 import Select from 'react-select';
 import formatPrice from '@/utils/formatPrice';
+
+import 'react-quill/dist/quill.snow.css'
 
 type Category = {
   id: string;
@@ -241,16 +244,7 @@ const CreateProduct: React.FC = () => {
         </div>
 
         {/* Description */}
-        <div>
-          <label className="block mb-2 font-medium">Description</label>
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
-            required
-          />
-        </div>
+        <ReactQuill theme="snow" value={formData.description} onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))} />
 
         {/* Price */}
         <div>

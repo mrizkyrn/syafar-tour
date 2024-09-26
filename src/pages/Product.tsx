@@ -1,14 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect } from 'react';
-import { Product as ProductType } from '@/types/ProductType';
+import { Category, Product as ProductType } from '@/types/ProductType';
 import { getAll } from '@/api/product-api';
+import { getAllCategory } from '@/api/category-api';
 import Container from '@/components/Container';
 import ProductCard from '@/components/cards/ProductCard';
 
 const Product: React.FC = () => {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
-  const [activeCategory, setActiveCategory] = useState<'Paket Umroh' | 'Visa Umroh' | 'Paket Hotel'>('Paket Umroh');
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -16,14 +18,19 @@ const Product: React.FC = () => {
       setProducts(response.data);
     };
 
+    const fetchCategories = async () => {
+      const response = await getAllCategory();
+      setCategories(response.data);
+      setActiveCategory(response.data[0].name);
+    };
+
     fetchProducts();
+    fetchCategories();
   }, []);
 
-  // Function to filter products based on active category
-  const filterProducts = (category: 'Paket Umroh' | 'Visa Umroh' | 'Paket Hotel') => {
+  const filterProducts = (category: string) => {
     setActiveCategory(category);
 
-    // Replace the filter condition based on your actual product data structure
     const filtered = products.filter((product) => {
       return product.categories.some((cat) => cat.name === category);
     });
@@ -32,7 +39,6 @@ const Product: React.FC = () => {
   };
 
   useEffect(() => {
-    // Initially set the filtered products to "Paket Umroh"
     filterProducts('Paket Umroh');
   }, [products]);
 
@@ -45,30 +51,19 @@ const Product: React.FC = () => {
         </div>
 
         <div className="flex items-center mb-8 md:mb-12 w-full bg-[#F3F3F3]">
-          <button
-            onClick={() => filterProducts('Paket Umroh')}
-            className={`text-xs md:text-lg hover:bg-primary hover:text-white text-center py-2 px-2 md:px-5 w-40 ${
-              activeCategory === 'Paket Umroh' ? 'text-white bg-primary' : 'text-slate-500'
-            }`}
-          >
-            Paket Umroh
-          </button>
-          <button
-            onClick={() => filterProducts('Visa Umroh')}
-            className={`text-xs md:text-lg hover:bg-primary hover:text-white text-center py-2 px-2 md:px-5 w-40 ${
-              activeCategory === 'Visa Umroh' ? 'text-white bg-primary' : 'text-slate-500'
-            }`}
-          >
-            Visa Umroh
-          </button>
-          <button
-            onClick={() => filterProducts('Paket Hotel')}
-            className={`text-xs md:text-lg hover:bg-primary hover:text-white text-center py-2 px-2 md:px-5 w-40 ${
-              activeCategory === 'Paket Hotel' ? 'text-white bg-primary' : 'text-slate-500'
-            }`}
-          >
-            Paket Hotel
-          </button>
+        {
+          categories.map((category, index) => (
+            <button
+              key={index}
+              onClick={() => filterProducts(category.name)}
+              className={`text-xs md:text-lg hover:bg-primary hover:text-white text-center py-2 px-2 md:px-5 ${
+                activeCategory === category.name ? 'text-white bg-primary' : 'text-slate-500'
+              }`}
+            >
+              {category.name}
+            </button>
+          ))
+        }
         </div>
 
         {/* Display the filtered products */}

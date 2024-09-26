@@ -13,7 +13,6 @@ interface NavbarItem {
 
 const navItems: NavbarItem[] = [
   { name: 'Home', to: '/' },
-  { name: 'Tentang', to: '/tentang' },
   { name: 'Produk', to: '/produk' },
   { name: 'Paket', to: '/paket' },
   { name: 'Faq', to: '/faq' },

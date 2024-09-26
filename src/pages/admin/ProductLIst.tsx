@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { getAll, deleteProduct } from '@/api/product-api';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { getAll, deleteProduct, createProduct } from '@/api/product-api';
+import { FaEdit, FaTrashAlt, FaCopy } from 'react-icons/fa';
 import { Product, Category } from '@/types/ProductType';
 import formatPrice from '@/utils/formatPrice';
-import { Link } from 'react-router-dom';
 
 const ProductList: React.FC = () => {
   const [products, setProducts] = useState<(Product & { categories: Category[] })[]>([]);
@@ -12,6 +12,7 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       const response = await getAll();
+      console.log(response.data);
       setProducts(response.data);
     };
     fetchProducts();
@@ -26,7 +27,24 @@ const ProductList: React.FC = () => {
 
     setProducts(products.filter((product) => product.id !== id));
   };
-  
+
+  // Duplicate product
+  const handleDuplicateProduct = async (id: string) => {
+    const originalProduct = products.find((product) => product.id === id);
+    if (!originalProduct) return;
+
+    // only send category id
+    const duplicatedProduct = {
+      ...originalProduct,
+      name: `${originalProduct.name} (Copy)`,
+      category_ids: originalProduct.categories.map((category) => category.id),
+    };
+
+    const response = await createProduct(duplicatedProduct);
+
+    setProducts([...products, response.data]);
+  };
+
   return (
     <div className="mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">Product List</h1>
@@ -55,7 +73,9 @@ const ProductList: React.FC = () => {
                   />
                 </td>
                 <td className="px-6 py-2 border-b">
-                  <p className="text-blue-500 hover:underline">{product.name}</p>
+                  <Link to={`/produk/${product.id}`} className="text-blue-500 hover:underline">
+                    <p className="text-blue-500 hover:underline cursor-pointer">{product.name}</p>
+                  </Link>
                 </td>
                 <td className="px-6 py-2 border-b">
                   {product.variations.length > 0 ? (
@@ -77,7 +97,9 @@ const ProductList: React.FC = () => {
                     <p className="text-gray-500">No variations</p>
                   )}
                 </td>
-                <td className="px-6 py-2 border-b">{product.categories.map((category: Category) => category.name).join(', ')}</td>
+                <td className="px-6 py-2 border-b">
+                  {product.categories.map((category: Category) => category.name).join(', ')}
+                </td>
 
                 {/* Actions */}
                 <td className="flex justify-center items-center px-6 py-2 border-b">
@@ -86,6 +108,12 @@ const ProductList: React.FC = () => {
                   </Link>
                   <button onClick={() => handleDeleteProduct(product.id)} className="text-red-500 hover:underline">
                     <FaTrashAlt />
+                  </button>
+                  <button
+                    className="text-gray-600 hover:underline ml-4"
+                    onClick={() => handleDuplicateProduct(product.id)}
+                  >
+                    <FaCopy />
                   </button>
                 </td>
               </tr>
