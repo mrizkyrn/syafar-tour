@@ -13,6 +13,7 @@ const AdminSidebar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isUserServiceOpen, setIsUserServiceOpen] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
+  // const [isUserOpen, setIsUserOpen] = useState(false);
   const [ServiceType, setServiceType] = useState<ServiceType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -183,6 +184,34 @@ const AdminSidebar: React.FC = () => {
                 Order
               </NavLink>
             </li>
+
+            {/* User */}
+            {/* <li> */}
+              {/* <button
+                onClick={() => setIsUserOpen((prev) => !prev)}
+                className="flex w-full px-4 py-3 justify-between items-center text-dark hover:bg-gray-200 border-b border-gray-300"
+                aria-haspopup="true"
+                aria-expanded={isUserOpen}
+              >
+                User {isUserOpen ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              {isUserOpen && (
+                <ul className="list-none"> */}
+                  <li>
+                    <NavLink
+                      to="/admin/user"
+                      className={({ isActive }) =>
+                        `w-full block px-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      User
+                    </NavLink>
+                  </li>
+                {/* </ul> */}
+              {/* )} */}
+            {/* </li> */}
           </ul>
         </nav>
       )}

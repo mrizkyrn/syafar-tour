@@ -13,7 +13,7 @@ import NotAuthorized from '@/pages/NotAuthorized';
 import Product from '@/pages/Product';
 import Packet from '@/pages/Packet';
 import Register from '@/pages/Register';
-import UserProfile from '@/pages/UserProfile';
+import UserProfile from '@/pages/user/UserProfile';
 import UserTransaction from '@/pages/UserTransaction';
 
 import './index.css';
@@ -26,6 +26,10 @@ import CreateProduct from '@/pages/admin/CreateProduct';
 import ProductCategory from './pages/admin/ProductCategory';
 import ProductOrder from './pages/admin/ProductOrder';
 import UpdateProduct from './pages/admin/UpdateProduct';
+import UserManagement from './pages/admin/UserManagement';
+import DetailProfile from './pages/user/DetailProfile';
+import RegisterMitra from './pages/user/RegisterMitra';
+import ChangePassword from './pages/user/password';
 
 const router = createBrowserRouter([
   {
@@ -70,6 +74,20 @@ const router = createBrowserRouter([
             <UserProfile />
           </ProtectedRoute>
         ),
+        children: [
+          {
+            index: true,
+            element: <DetailProfile />,
+          },
+          {
+            path: 'change-password',
+            element: <ChangePassword />,
+          },
+          {
+            path: 'daftar-mitra',
+            element: <RegisterMitra />,
+          }
+        ],
       },
       {
         path: '/user/transaksi',
@@ -116,6 +134,10 @@ const router = createBrowserRouter([
       {
         path: '/admin/order',
         element: <ProductOrder />,
+      },
+      {
+        path: '/admin/user',
+        element: <UserManagement />,
       }
     ],
   },

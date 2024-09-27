@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import { logout } from '@/api/auth-api';
-import axios from 'axios';
+import { getCurrentUser } from '@/api/user-api';
 
 interface User {
   id: number;
@@ -28,8 +28,8 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       try {
         setIsLoading(true);
 
-        const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/v1/auth/me`, { withCredentials: true });
-        setUser(response.data.user);
+        const response = await getCurrentUser();
+        setUser(response.data);
         
       } catch (error: any) {
         console.error(error.response.data);
