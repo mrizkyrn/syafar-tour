@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 
 import MainLayout from '@/components/layouts/MainLayout';
 import ProtectedRoute from '@/components/layouts/ProtectedRoute';
@@ -15,21 +16,22 @@ import Packet from '@/pages/Packet';
 import Register from '@/pages/Register';
 import UserProfile from '@/pages/user/UserProfile';
 import UserTransaction from '@/pages/UserTransaction';
-
-import './index.css';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import UserService from '@/pages/admin/UserService';
 import CalculationResult from '@/pages/CalculationResult';
 import DetailProduct from '@/pages/DetailProduct';
 import ProductList from '@/pages/admin/ProductLIst';
 import CreateProduct from '@/pages/admin/CreateProduct';
-import ProductCategory from './pages/admin/ProductCategory';
-import ProductOrder from './pages/admin/ProductOrder';
-import UpdateProduct from './pages/admin/UpdateProduct';
-import UserManagement from './pages/admin/UserManagement';
-import DetailProfile from './pages/user/DetailProfile';
-import RegisterMitra from './pages/user/RegisterMitra';
-import ChangePassword from './pages/user/password';
+import ProductCategory from '@/pages/admin/ProductCategory';
+import ProductOrder from '@/pages/admin/ProductOrder';
+import UpdateProduct from '@/pages/admin/UpdateProduct';
+import UserManagement from '@/pages/admin/UserManagement';
+import DetailProfile from '@/pages/user/DetailProfile';
+import RegisterMitra from '@/pages/user/RegisterMitra';
+import ChangePassword from '@/pages/user/password';
+
+import './index.css';
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
   {
@@ -155,6 +157,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
+      <ToastContainer />
     </AuthProvider>
   </StrictMode>
 );

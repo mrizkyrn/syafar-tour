@@ -62,7 +62,7 @@ export const updateCurrentUserPassword = async (data: UpdatePasswordRequest) => 
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 }
 

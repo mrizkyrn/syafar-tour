@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { UpdatePasswordRequest } from '@/types';
 import { updateCurrentUserPassword } from '@/api/user-api';
+import { toast } from 'react-toastify';
 
 const ChangePassword: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -18,23 +19,24 @@ const ChangePassword: React.FC = () => {
     e.preventDefault();
 
     if (formData.new_password !== formData.confirm_password) {
-      alert('Password baru dan konfirmasi password tidak sama');
+      toast.error('Password baru dan konfirmasi password tidak sama');
       return;
     }
-    console.log('Form Data:', formData);
-    const response = await updateCurrentUserPassword(formData as UpdatePasswordRequest);
 
-    if (response.success) {
-      alert('Password berhasil diubah');
-
-      setFormData({
-        old_password: '',
-        new_password: '',
-        confirm_password: '',
-      });
-    } else {
-      alert('Gagal mengubah password');
-    }
+    await toast.promise(updateCurrentUserPassword(formData as UpdatePasswordRequest), {
+      pending: 'Updating password...',
+      success: {
+        render({ data }) {
+          return `${data.message}`;
+        },
+      },
+      error: {
+        render({ data }) {
+          console.error(data);
+          return `Error: ${(data as { message: string }).message}`;
+        },
+      },
+    });
   };
 
   return (

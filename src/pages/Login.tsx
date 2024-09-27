@@ -1,24 +1,23 @@
+import Logo from '@/components/Logo';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { login } from '@/api/auth-api';
+import { toast } from 'react-toastify';
+import { loginUser } from '@/api/auth-api';
 import { useAuth } from '@/hook/AuthProvider';
-import Logo from '@/components/Logo';
+import { LoginUserRequest } from '@/types/UserType';
 
 const Login: React.FC = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const { setUser } = useAuth();
 
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<LoginUserRequest>({
     email: '',
     password: '',
   });
-
-  const [errors, setErrors] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -29,30 +28,26 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors(null);
 
-    try {
-      setLoading(true);
-
-      const response = await login({
-        email: formData.email,
-        password: formData.password
-      });
-
-      if (!response.success) {
-        setErrors(response.message);
-        return;
-      }
-      
-      setSuccess('Login berhasil');
-      setUser(response.data);
-      navigate('/');
-    } catch (error: any) {
-      setErrors(error.message || 'Terjadi kesalahan. Silakan coba lagi.');
-    } finally {
-      setLoading(false);
-    }
-  }
+    setLoading(true);
+    toast.promise(loginUser(formData), {
+      pending: 'Mengautentikasi...',
+      success: {
+        render({ data }) {
+          setLoading(false);
+          setUser(data.data);
+          navigate('/');
+          return (data as { message: string }).message;
+        },
+      },
+      error: {
+        render({ data }) {
+          setLoading(false);
+          return (data as { message: string }).message;
+        },
+      },
+    });
+  };
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -97,10 +92,6 @@ const Login: React.FC = () => {
               {passwordVisible ? <FaEyeSlash className="text-gray-600" /> : <FaEye className="text-gray-600" />}
             </button>
           </div>
-
-          {/* Error and Success Messages */}
-          {errors && <p className="text-red-500 text-sm">{errors}</p>}
-          {success && <p className="text-green-500 text-sm">{success}</p>}
 
           {/* Forgot Password */}
           <p className="text-right text-gray-600">

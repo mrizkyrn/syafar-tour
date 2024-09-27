@@ -1,3 +1,4 @@
+import { RegisterUserRequest, LoginUserRequest } from '@/types/UserType';
 import axios from 'axios';
 
 const api = axios.create({
@@ -5,33 +6,32 @@ const api = axios.create({
    withCredentials: true,
 });
 
-export const register = async (userData: any) => {
+export const registerUser = async (request: RegisterUserRequest) => {
    try {
-      console.log(userData);
-      const response = await api.post('/register', userData);
+      const response = await api.post('/register', request);
       return response.data;
    } catch (error: any) {
       console.error(error.response.data);
-      return error.response.data;
+      throw error.response.data;
    }
 };
 
-export const login = async (userData: any) => {
+export const loginUser = async (request: LoginUserRequest) => {
    try {
-      const response = await api.post('/login', userData);
+      const response = await api.post('/login', request);
       return response.data;
    } catch (error: any) {
       console.error(error.response.data);
-      return error.response.data;
+      throw error.response.data;
    }
 };
 
-export const logout = async () => {
+export const logoutUser = async () => {
    try {
       const response = await api.post('/logout');
       return response.data;
    } catch (error: any) {
       console.error(error.response.data);
-      return error.response.data;
+      throw error.response.data;
    }
 };

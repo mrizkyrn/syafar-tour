@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { logout } from '@/api/auth-api';
+import { logoutUser } from '@/api/auth-api';
 import { getCurrentUser } from '@/api/user-api';
 
 interface User {
@@ -43,7 +43,7 @@ const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const userLogout = async () => {
     try {
-      await logout();
+      await logoutUser();
       setUser(null);
     } catch (error: any) {
       console.error(error.response.data);

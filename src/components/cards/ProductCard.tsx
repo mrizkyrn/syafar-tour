@@ -1,5 +1,4 @@
 import React from 'react';
-import MainButton from '../MainButton';
 import { Product } from '@/types/ProductType';
 import { Link } from 'react-router-dom';
 
@@ -31,7 +30,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </p>
       </div>
 
-      <MainButton text="Selengkapnya" to={`/produk/${product.id}`} />
+      <div className='bg-primary text-center text-white text-sm md:text-base px-6 sm:px-10 py-2 rounded-md'
+      >
+        Lihat Produk
+      </div>
     </Link>
   );
 };

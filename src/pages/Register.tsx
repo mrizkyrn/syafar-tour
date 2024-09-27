@@ -1,25 +1,25 @@
+import Logo from '@/components/Logo';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import { register } from '@/api/auth-api';
-import Logo from '@/components/Logo';
+import { toast } from 'react-toastify';
+import { registerUser } from '@/api/auth-api';
+import { RegisterUserRequest } from '@/types/UserType';
 
 const Register: React.FC = () => {
+  const navigate = useNavigate();
+
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [passwordConfirmationVisible, setPasswordConfirmationVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    fullName: '',
+  const [formData, setFormData] = useState<RegisterUserRequest & { password_confirmation: string }>({
+    full_name: '',
     email: '',
-    whatsappNumber: '',
+    whatsapp_number: '',
     password: '',
-    passwordConfirmation: '',
+    password_confirmation: '',
   });
-
-  const [errors, setErrors] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -30,39 +30,29 @@ const Register: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrors(null);
 
-    if (formData.password !== formData.passwordConfirmation) {
-      setErrors('Password dan konfirmasi password tidak sama.');
+    if (formData.password !== formData.password_confirmation) {
+      toast.error('Password dan konfirmasi password tidak sama');
       return;
     }
 
-    try {
-      setLoading(true);
-
-      const response = await register({
-        full_name: formData.fullName,
-        email: formData.email,
-        whatsapp_number: formData.whatsappNumber,
-        password: formData.password,
-        password_confirmation: formData.passwordConfirmation,
-      });
-
-      if (!response.success) {
-        setErrors(response.message);
-        return;
-      }
-
-      setSuccess('Registrasi berhasil. Anda akan diarahkan ke halaman login dalam 3 detik.');
-
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    } catch (error: any) {
-      setErrors(error.message || 'Terjadi kesalahan. Silakan coba lagi.');
-    } finally {
-      setLoading(false);
-    }
+    setLoading(true);
+    toast.promise(registerUser(formData), {
+      pending: 'Mendaftarkan...',
+      success: {
+        render({ data }) {
+          setLoading(false);
+          navigate('/login');
+          return (data as { message: string }).message;
+        },
+      },
+      error: {
+        render({ data }) {
+          setLoading(false);
+          return (data as { message: string }).message;
+        },
+      },
+    });
   };
 
   return (
@@ -80,10 +70,10 @@ const Register: React.FC = () => {
           <div>
             <input
               type="text"
-              id="fullName"
+              id="full_name"
               placeholder="Nama Lengkap"
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-              value={formData.fullName}
+              value={formData.full_name}
               onChange={handleChange}
               required
             />
@@ -106,10 +96,10 @@ const Register: React.FC = () => {
           <div>
             <input
               type="text"
-              id="whatsappNumber"
+              id="whatsapp_number"
               placeholder="Nomor WhatsApp"
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-              value={formData.whatsappNumber}
+              value={formData.whatsapp_number}
               onChange={handleChange}
               required
             />
@@ -139,10 +129,10 @@ const Register: React.FC = () => {
           <div className="relative">
             <input
               type={passwordConfirmationVisible ? 'text' : 'password'}
-              id="passwordConfirmation"
+              id="password_confirmation"
               placeholder="Konfirmasi Password"
               className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
-              value={formData.passwordConfirmation}
+              value={formData.password_confirmation}
               onChange={handleChange}
               required
             />
@@ -158,10 +148,6 @@ const Register: React.FC = () => {
               )}
             </button>
           </div>
-
-          {/* Error and Success Messages */}
-          {errors && <p className="text-red-500 text-sm">{errors}</p>}
-          {success && <p className="text-green-500 text-sm">{success}</p>}
 
           {/* Login Link */}
           <p className="text-gray-600 text-sm">
