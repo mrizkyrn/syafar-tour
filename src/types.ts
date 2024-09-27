@@ -6,3 +6,8 @@ export type UserResponse = {
   role: string;
   token?: string;
 };
+
+export type UpdatePasswordRequest = {
+  old_password: string;
+  new_password: string;
+};

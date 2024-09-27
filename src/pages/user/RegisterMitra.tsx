@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { FaRegCopy } from 'react-icons/fa';
 import { upgrateUserToMitra } from '@/api/user-api';
 
-const RegisterMitra = () => {
+const RegisterMitra: React.FC = () => {
   interface UserContext {
     id: string;
     full_name: string;

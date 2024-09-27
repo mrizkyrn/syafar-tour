@@ -1,16 +1,53 @@
-const ChangePassword = () => {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    alert('Change Password Not Implemented Yet');
+import { useState } from 'react';
+import { UpdatePasswordRequest } from '@/types';
+import { updateCurrentUserPassword } from '@/api/user-api';
+
+const ChangePassword: React.FC = () => {
+  const [formData, setFormData] = useState({
+    old_password: '',
+    new_password: '',
+    confirm_password: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (formData.new_password !== formData.confirm_password) {
+      alert('Password baru dan konfirmasi password tidak sama');
+      return;
+    }
+    console.log('Form Data:', formData);
+    const response = await updateCurrentUserPassword(formData as UpdatePasswordRequest);
+
+    if (response.success) {
+      alert('Password berhasil diubah');
+
+      setFormData({
+        old_password: '',
+        new_password: '',
+        confirm_password: '',
+      });
+    } else {
+      alert('Gagal mengubah password');
+    }
+  };
+
   return (
-    <div className="px-6">
+    <div>
       <h3 className="text-lg font-semibold text-gray-700">Ganti Password</h3>
       <form onSubmit={handleSubmit}>
         <div className="mt-4">
           <label className="block text-gray-600">Password Lama</label>
           <input
             type="password"
+            name="old_password"
+            value={formData.old_password}
+            onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
           />
         </div>
@@ -19,6 +56,9 @@ const ChangePassword = () => {
             <label className="block text-gray-600">Password Baru</label>
             <input
               type="password"
+              name="new_password"
+              value={formData.new_password}
+              onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -26,6 +66,9 @@ const ChangePassword = () => {
             <label className="block text-gray-600">Konfirmasi Password Baru</label>
             <input
               type="password"
+              name="confirm_password"
+              value={formData.confirm_password}
+              onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
             />
           </div>

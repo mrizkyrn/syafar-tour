@@ -21,7 +21,7 @@ const HeroSection: React.FC = () => {
               Temukan paket reguler, private, atau buat paket umroh sesuai kebutuhan Anda. Perjalanan spiritual lebih
               mudah dan nyaman dengan kami.
             </p>
-            <MainButton text="Lihat Paket" onClick={() => navigate('/paket')} />
+            <MainButton text="Lihat Produk" onClick={() => navigate('/produk')} />
           </div>
           <div className="sm:absolute sm:w-1/2 bottom-0 right-0 -z-10">
             <img src="/images/hero.png" alt="Hero" className="w-full text-end" />

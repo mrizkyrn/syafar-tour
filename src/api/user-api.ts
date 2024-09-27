@@ -1,3 +1,4 @@
+import { UpdatePasswordRequest } from '@/types';
 import axios from 'axios';
 
 const api = axios.create({
@@ -55,9 +56,19 @@ export const updateCurrentUser = async (data: any) => {
   }
 };
 
+export const updateCurrentUserPassword = async (data: UpdatePasswordRequest) => {
+  try {
+    const response = await api.patch('/current/password', data);
+    return response.data;
+  } catch (error: any) {
+    console.error(error.response.data);
+    return error.response.data;
+  }
+}
+
 export const updateUser = async (id: string, data: any) => {
   try {
-    const response = await api.put(`/${id}`, data);
+    const response = await api.patch(`/${id}`, data);
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { getAll } from '@/api/service-type';
 import Logo from './Logo';
@@ -52,9 +52,9 @@ const AdminSidebar: React.FC = () => {
       }`}
     >
       {/* Logo */}
-      <Link to="/" className="flex justify-center items-center h-16 border-b border-gray-300 mt-5 cursor-pointer">
+      <div className="flex justify-center items-center h-16 border-b border-gray-300 mt-5 cursor-pointer">
         {isSidebarOpen && <Logo className="w-36" />}
-      </Link>
+      </div>
 
       {/* Sidebar toggle */}
       <button

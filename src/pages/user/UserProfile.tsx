@@ -24,9 +24,9 @@ const UserProfile: React.FC = () => {
 
   return (
     <Container>
-      <div className="flex rounded-lg pt-10 pb-20">
+      <div className="flex flex-col md:flex-row gap-10 rounded-lg pt-10 pb-20">
         {/* Left Sidebar */}
-        <div className="w-1/3 pr-4">
+        <div className="md:w-1/3">
           {/* Profile Card */}
           <div className="bg-primary text-white text-center p-6 rounded-lg">
             <h2 className="text-2xl font-bold">{userData?.full_name}</h2>
@@ -89,7 +89,7 @@ const UserProfile: React.FC = () => {
         </div>
 
         {/* Right Section */}
-        <div className="w-2/3">{userData && <Outlet context={userData} />}</div>
+        <div className="md:w-2/3">{userData && <Outlet context={userData} />}</div>
       </div>
     </Container>
   );

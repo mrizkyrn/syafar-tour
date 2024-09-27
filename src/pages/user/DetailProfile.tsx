@@ -8,7 +8,7 @@ interface UserContext {
   whatsapp_number: string;
 }
 
-const DetailProfile = () => {
+const DetailProfile: React.FC = () => {
   const userData = useOutletContext<UserContext>();
   const [isModified, setIsModified] = useState(false);
   const [formData, setFormData] = useState({
@@ -50,7 +50,7 @@ const DetailProfile = () => {
     }
   };
   return (
-    <div className="px-6">
+    <div>
       <h3 className="text-lg font-semibold text-gray-700">Detail Profil</h3>
       <form onSubmit={handleSubmit}>
         <div className="mt-4">
@@ -66,7 +66,7 @@ const DetailProfile = () => {
 
         {/* Contact Details */}
         <h3 className="text-lg font-semibold text-gray-700 mt-6">Detail Kontak</h3>
-        <div className="grid grid-cols-2 gap-4 mt-4">
+        <div className="flex flex-col md:flex-row gap-4 mt-4">
           <div>
             <label className="block text-gray-600">Email</label>
             <input
