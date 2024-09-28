@@ -3,32 +3,32 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
+import AdminLayout from '@/components/layouts/AdminLayout';
 import MainLayout from '@/components/layouts/MainLayout';
 import ProtectedRoute from '@/components/layouts/ProtectedRoute';
 import AuthProvider from '@/hook/AuthProvider';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
-import Faq from '@/pages/Faq';
-import Home from '@/pages/Homepage';
-import Login from '@/pages/Login';
-import NotAuthorized from '@/pages/NotAuthorized';
-import Product from '@/pages/Product';
-import Packet from '@/pages/Packet';
-import Register from '@/pages/Register';
-import UserProfile from '@/pages/user/UserProfile';
-import UserTransaction from '@/pages/UserTransaction';
-import AdminLayout from '@/components/layouts/AdminLayout';
-import UserService from '@/pages/admin/UserService';
-import CalculationResult from '@/pages/CalculationResult';
-import DetailProduct from '@/pages/DetailProduct';
-import ProductList from '@/pages/admin/ProductLIst';
 import CreateProduct from '@/pages/admin/CreateProduct';
 import ProductCategory from '@/pages/admin/ProductCategory';
+import ProductList from '@/pages/admin/ProductLIst';
 import ProductOrder from '@/pages/admin/ProductOrder';
 import UpdateProduct from '@/pages/admin/UpdateProduct';
-import UserManagement from '@/pages/admin/UserManagement';
+import UserService from '@/pages/admin/UserService';
+import UserList from '@/pages/admin/UserList';
+import ChangePassword from '@/pages/user/ChangePassword';
 import DetailProfile from '@/pages/user/DetailProfile';
+import UserProfile from '@/pages/user/UserProfile';
+import UserTransaction from '@/pages/user/UserTransaction';
 import RegisterMitra from '@/pages/user/RegisterMitra';
-import ChangePassword from '@/pages/user/password';
+import CalculationResult from '@/pages/public/CalculationResult';
+import DetailProduct from '@/pages/public/DetailProduct';
+import Faq from '@/pages/public/Faq';
+import Home from '@/pages/public/Homepage';
+import Login from '@/pages/public/Login';
+import NotAuthorized from '@/pages/public/NotAuthorized';
+import Product from '@/pages/public/Product';
+import Packet from '@/pages/public/Packet';
+import Register from '@/pages/public/Register';
 
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -139,7 +139,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/admin/user',
-        element: <UserManagement />,
+        element: <UserList />,
       }
     ],
   },
@@ -157,7 +157,10 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
-      <ToastContainer />
+      <ToastContainer 
+        hideProgressBar={true}
+        autoClose={2000}
+      />
     </AuthProvider>
   </StrictMode>
 );

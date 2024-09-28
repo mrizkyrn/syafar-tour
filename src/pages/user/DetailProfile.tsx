@@ -1,54 +1,61 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { updateCurrentUser } from '@/api/user-api';
-
-interface UserContext {
-  full_name: string;
-  email: string;
-  whatsapp_number: string;
-}
+import { UpdateUserRequest, UserResponse } from '@/types/UserType';
 
 const DetailProfile: React.FC = () => {
-  const userData = useOutletContext<UserContext>();
-  const [isModified, setIsModified] = useState(false);
-  const [formData, setFormData] = useState({
-    full_name: userData?.full_name,
-    email: userData?.email,
-    whatsapp_number: userData?.whatsapp_number,
-  });
-  const [initialData, setInitialData] = useState({
-    full_name: userData?.full_name,
-    email: userData?.email,
-    whatsapp_number: userData?.whatsapp_number,
+  const { user, setUser } = useOutletContext<{
+    user: UserResponse;
+    setUser: React.Dispatch<React.SetStateAction<UserResponse>>;
+  }>();
+
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<UpdateUserRequest>({
+    full_name: user?.full_name,
+    email: user?.email,
+    whatsapp_number: user?.whatsapp_number,
   });
 
-  useEffect(() => {
-    const isDataModified = JSON.stringify(formData) !== JSON.stringify(initialData);
-    setIsModified(isDataModified);
-  }, [formData, initialData]);
+  const isModified = useMemo(() => {
+    return (
+      formData.full_name !== user.full_name ||
+      formData.whatsapp_number !== user.whatsapp_number
+    );
+  }, [formData, user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = async () => {
-    const modifiedData: Partial<typeof formData> = {};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const modifiedData: UpdateUserRequest = {};
 
-    for (const key in formData) {
-      if (formData[key as keyof typeof formData] !== initialData[key as keyof typeof initialData]) {
-        modifiedData[key as keyof typeof formData] = formData[key as keyof typeof formData];
-      }
-    }
+    if (formData.full_name !== user.full_name) modifiedData.full_name = formData.full_name;
+    if (formData.whatsapp_number !== user.whatsapp_number) modifiedData.whatsapp_number = formData.whatsapp_number;
 
-    if (Object.keys(modifiedData).length > 0) {
-      const response = await updateCurrentUser(modifiedData);
-      console.log('Update User:', response);
-      setInitialData({ ...initialData, ...modifiedData });
-    } else {
-      console.log('No fields have been modified');
-    }
+    setLoading(true);
+    toast.promise(updateCurrentUser(modifiedData), {
+      pending: 'Memperbarui...',
+      success: {
+        render({ data }) {
+          setFormData({ ...formData, ...modifiedData });
+          setUser((prev) => (prev ? { ...prev, ...modifiedData } : prev));
+          setLoading(false);
+          return (data as { message: string }).message;
+        },
+      },
+      error: {
+        render({ data }) {
+          setLoading(false);
+          return (data as { message: string }).message;
+        },
+      },
+    });
   };
+
   return (
     <div>
       <h3 className="text-lg font-semibold text-gray-700">Detail Profil</h3>
@@ -60,44 +67,45 @@ const DetailProfile: React.FC = () => {
             name="full_name"
             value={formData.full_name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-2 border rounded-lg mt-1 border-gray-400 focus:outline-none focus:border-primary"
           />
         </div>
 
         {/* Contact Details */}
         <h3 className="text-lg font-semibold text-gray-700 mt-6">Detail Kontak</h3>
-        <div className="flex flex-col md:flex-row gap-4 mt-4">
-          <div>
+        <div className="flex flex-col md:flex-row gap-4 mt-4 w-full">
+          <div className="w-full">
             <label className="block text-gray-600">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg mt-1 text-gray-400"
+              className="w-full px-4 py-2 border rounded-lg mt-1 border-gray-400 text-gray-400"
               disabled
             />
           </div>
-          <div>
+          <div className="w-full">
             <label className="block text-gray-600">Nomor Whatsapp</label>
             <input
               type="text"
               name="whatsapp_number"
               value={formData.whatsapp_number}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-2 border rounded-lg mt-1 border-gray-400 focus:outline-none focus:border-primary"
             />
           </div>
         </div>
 
         <button
           type="submit"
-          disabled={!isModified}
+          disabled={!isModified || loading}
           className={`mt-6 w-full py-2 rounded-lg ${
             isModified ? 'bg-primary text-white hover:bg-primaryDark' : 'bg-gray-300 text-gray-800 cursor-not-allowed'
           }`}
+          aria-disabled={!isModified || loading}
         >
-          Simpan
+          {loading ? 'Memperbarui...' : 'Perbarui Profil'}
         </button>
       </form>
     </div>

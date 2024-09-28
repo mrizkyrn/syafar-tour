@@ -1,18 +1,19 @@
 import { UpdatePasswordRequest } from '@/types';
+import { UpdateUserRequest, UserQueryParams } from '@/types/UserType';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BASE_URL}/v1/user`,
+  baseURL: `${import.meta.env.VITE_BASE_URL}/v1/users`,
   withCredentials: true,
 });
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (params: UserQueryParams) => {
   try {
-    const response = await api.get('/');
+    const response = await api.get('/', { params });
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
@@ -22,17 +23,7 @@ export const getUserById = async (id: string) => {
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
-  }
-};
-
-export const getUsersByRole = async (role: string) => {
-  try {
-    const response = await api.get(`/role/${role}`);
-    return response.data;
-  } catch (error: any) {
-    console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
@@ -42,23 +33,23 @@ export const getCurrentUser = async () => {
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
-export const updateCurrentUser = async (data: any) => {
+export const updateCurrentUser = async (request: UpdateUserRequest) => {
   try {
-    const response = await api.patch('/current', data);
+    const response = await api.patch('/current', request);
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
-export const updateCurrentUserPassword = async (data: UpdatePasswordRequest) => {
+export const updateCurrentUserPassword = async (request: UpdatePasswordRequest) => {
   try {
-    const response = await api.patch('/current/password', data);
+    const response = await api.patch('/current/password', request);
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
@@ -66,13 +57,15 @@ export const updateCurrentUserPassword = async (data: UpdatePasswordRequest) => 
   }
 }
 
-export const updateUser = async (id: string, data: any) => {
+export const updateUser = async (id: string, data: UpdateUserRequest) => {
+  // delay for 1 second
+  await new Promise((resolve) => setTimeout(resolve, 2000));
   try {
     const response = await api.patch(`/${id}`, data);
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
@@ -82,17 +75,16 @@ export const deleteUser = async (id: string) => {
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
 export const upgrateUserToMitra = async (id: string) => {
-  console.log('Upgrade user to mitra:', id);
   try {
     const response = await api.patch(`/upgrade/${id}`);
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 }

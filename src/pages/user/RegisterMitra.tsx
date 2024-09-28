@@ -1,27 +1,25 @@
 import { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { FaRegCopy } from 'react-icons/fa';
 import { upgrateUserToMitra } from '@/api/user-api';
+import { UserResponse } from '@/types/UserType';
 
 const RegisterMitra: React.FC = () => {
-  interface UserContext {
-    id: string;
-    full_name: string;
-    email: string;
-    whatsapp_number: string;
-  }
+  const { user, setUser } = useOutletContext<{
+    user: UserResponse;
+    setUser: React.Dispatch<React.SetStateAction<UserResponse>>;
+  }>();
 
-  const userData = useOutletContext<UserContext>();
+  const [showPopup, setShowPopup] = useState(false);
   const [formData, setFormData] = useState({
-    full_name: userData?.full_name,
-    email: userData?.email,
-    whatsapp_number: userData?.whatsapp_number,
+    full_name: user?.full_name,
+    email: user?.email,
+    whatsapp_number: user?.whatsapp_number,
     ktp: null,
     bukti_bayar: null,
     upgrade_mitra: '',
   });
-
-  const [showPopup, setShowPopup] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target as HTMLInputElement;
@@ -36,28 +34,33 @@ const RegisterMitra: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setShowPopup(true);
-    // Submit form logic here
   };
 
   const handleConfirm = async () => {
-    const response = await upgrateUserToMitra(userData.id);
-
-    if (!response.success) {
-      alert('Gagal upgrade ke mitra');
-    } else {
-      alert('Berhasil upgrade ke mitra');
-    }
-
-    setShowPopup(false);
-    window.location.reload();
+    await toast.promise(upgrateUserToMitra(user.id), {
+      pending: 'Upgrading user...',
+      success: {
+        render({ data }) {
+          setUser(data.data);
+          return `${data.message}`;
+        },
+      },
+      error: {
+        render({ data }) {
+          return `Error: ${(data as { message: string }).message}`;
+        },
+      },
+    });
   };
 
   return (
-    <div className="px-6">
-      <h3 className="text-lg font-semibold text-gray-700">Register Mitra</h3>
+    <div>
+      <h3 className="text-lg font-semibold text-gray-700">Daftar Mitra</h3>
       <form onSubmit={handleSubmit}>
         <div className="mt-4">
-          <label className="block text-gray-600">Nama Lengkap *</label>
+          <label className="block text-gray-600">
+            Nama Lengkap <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             name="full_name"
@@ -69,7 +72,9 @@ const RegisterMitra: React.FC = () => {
         </div>
 
         <div className="mt-4">
-          <label className="block text-gray-600">Email *</label>
+          <label className="block text-gray-600">
+            Email <span className="text-red-500">*</span>
+          </label>
           <input
             type="email"
             name="email"
@@ -81,7 +86,9 @@ const RegisterMitra: React.FC = () => {
         </div>
 
         <div className="mt-4">
-          <label className="block text-gray-600">Nomor WhatsApp *</label>
+          <label className="block text-gray-600">
+            Nomor WhatsApp <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             name="whatsapp_number"
@@ -93,7 +100,9 @@ const RegisterMitra: React.FC = () => {
         </div>
 
         <div className="mt-4">
-          <label className="block text-gray-600">Upload KTP *</label>
+          <label className="block text-gray-600">
+            Upload KTP <span className="text-red-500">*</span>
+          </label>
           <input
             type="file"
             name="ktp"
@@ -104,7 +113,9 @@ const RegisterMitra: React.FC = () => {
         </div>
 
         <div className="mt-4">
-          <label className="block text-gray-600">Upgrade Mitra *</label>
+          <label className="block text-gray-600">
+            Upgrade Mitra <span className="text-red-500">*</span>
+          </label>
           <select
             name="upgrade_mitra"
             value={formData.upgrade_mitra}
@@ -118,7 +129,9 @@ const RegisterMitra: React.FC = () => {
         </div>
 
         <div className="mt-4">
-          <label className="block text-gray-600">Upload Bukti Bayar *</label>
+          <label className="block text-gray-600">
+            Upload Bukti Bayar <span className="text-red-500">*</span>
+          </label>
           <input
             type="file"
             name="bukti_bayar"
@@ -154,6 +167,12 @@ const RegisterMitra: React.FC = () => {
                 className="w-24 mx-auto"
               />
             </div>
+            <button
+              onClick={() => setShowPopup(false)}
+              className="mr-4 bg-gray-300 text-center text-gray-700 text-sm md:text-base px-6 sm:px-10 py-2 rounded-md hover:bg-gray-400 transition-colors duration-300"
+            >
+              Batal
+            </button>
             <button
               onClick={handleConfirm}
               className="bg-primary text-center text-white text-sm md:text-base px-6 sm:px-10 py-2 rounded-md hover:bg-primaryDark transition-colors duration-300"

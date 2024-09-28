@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 import { UpdatePasswordRequest } from '@/types';
 import { updateCurrentUserPassword } from '@/api/user-api';
-import { toast } from 'react-toastify';
 
 const ChangePassword: React.FC = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<UpdatePasswordRequest & { confirm_password: string }>({
     old_password: '',
     new_password: '',
     confirm_password: '',
@@ -27,6 +27,7 @@ const ChangePassword: React.FC = () => {
       pending: 'Updating password...',
       success: {
         render({ data }) {
+          setFormData({ old_password: '', new_password: '', confirm_password: '' });
           return `${data.message}`;
         },
       },
@@ -50,7 +51,8 @@ const ChangePassword: React.FC = () => {
             name="old_password"
             value={formData.old_password}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-2 border rounded-lg mt-1 border-gray-400 focus:outline-none focus:border-primary"
+            required
           />
         </div>
         <div className="flex flex-col md:flex-row gap-5 w-full">
@@ -61,7 +63,8 @@ const ChangePassword: React.FC = () => {
               name="new_password"
               value={formData.new_password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-2 border rounded-lg mt-1 border-gray-400 focus:outline-none focus:border-primary"
+              required
             />
           </div>
           <div className="mt-4 w-1/2">
@@ -71,7 +74,8 @@ const ChangePassword: React.FC = () => {
               name="confirm_password"
               value={formData.confirm_password}
               onChange={handleChange}
-              className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-2 border rounded-lg mt-1 border-gray-400 focus:outline-none focus:border-primary"
+              required
             />
           </div>
         </div>

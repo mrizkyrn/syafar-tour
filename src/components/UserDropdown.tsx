@@ -1,16 +1,9 @@
+import { UserResponse } from '@/types/UserType';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-interface UserData {
-  id: number;
-  full_name: string;
-  email: string;
-  whatsapp_number: string;
-  role: string;
-}
-
 interface UserDropdownProps {
-  user: UserData | null;
+  user: UserResponse;
   onLogout: () => void;
 }
 
