@@ -73,9 +73,6 @@ export const SelectInput: React.FC<SelectInputProps> = ({ label, options, ...pro
         {...props}
         className="w-full px-3 py-3 md:px-5 md:py-4 mt-3 border text-xs md:text-base border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
       >
-        <option value="" disabled>
-          Pilih {label}
-        </option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

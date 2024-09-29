@@ -13,7 +13,8 @@ import ProductCategory from '@/pages/admin/ProductCategory';
 import ProductList from '@/pages/admin/ProductLIst';
 import ProductOrder from '@/pages/admin/ProductOrder';
 import UpdateProduct from '@/pages/admin/UpdateProduct';
-import UserService from '@/pages/admin/UserService';
+import UserPackageOption from '@/pages/admin/UserPackageOption';
+import UserPackageOrder from '@/pages/admin/UserPackageOrder';
 import UserList from '@/pages/admin/UserList';
 import ChangePassword from '@/pages/user/ChangePassword';
 import DetailProfile from '@/pages/user/DetailProfile';
@@ -27,7 +28,7 @@ import Home from '@/pages/public/Homepage';
 import Login from '@/pages/public/Login';
 import NotAuthorized from '@/pages/public/NotAuthorized';
 import Product from '@/pages/public/Product';
-import Packet from '@/pages/public/Packet';
+import CustomPackage from '@/pages/public/CustomPackage';
 import Register from '@/pages/public/Register';
 
 import './index.css';
@@ -55,7 +56,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/paket',
-        element: <Packet />,
+        element: <CustomPackage />,
       },
       {
         path: '/faq',
@@ -115,7 +116,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/admin/layanan-user/:type',
-        element: <UserService />,
+        element: <UserPackageOption />,
       },
       {
         path: '/admin/produk/list',
@@ -134,8 +135,12 @@ const router = createBrowserRouter([
         element: <UpdateProduct />,
       },
       {
-        path: '/admin/order',
+        path: '/admin/order/produk',
         element: <ProductOrder />,
+      },
+      {
+        path: '/admin/order/paket-jamaah',
+        element: <UserPackageOrder />,
       },
       {
         path: '/admin/user',

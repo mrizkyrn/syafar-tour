@@ -15,7 +15,7 @@ interface Order {
   updated_at: string;
   Product: {
     name: string;
-  }
+  };
   User: {
     full_name: string;
     email: string;
@@ -69,7 +69,7 @@ const ProductOrder: React.FC = () => {
                 <td className="px-6 py-2 border-b">{order.User.whatsapp_number}</td>
                 <td className="px-6 py-2 border-b">{order.User.email}</td>
                 <td className="px-6 py-2 border-b">{order.Product.name}</td>
-                <td className="px-6 py-2 border-b">{order.variation || "-"}</td>
+                <td className="px-6 py-2 border-b">{order.variation || '-'}</td>
                 <td className="px-6 py-2 border-b">{order.departure.split('T')[0]}</td>
                 <td className="px-6 py-2 border-b">{order.number_of_pax}</td>
                 <td className="px-6 py-2 border-b">{formatPrice(order.per_pax_price)}</td>

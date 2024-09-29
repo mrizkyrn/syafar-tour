@@ -1,12 +1,14 @@
+import Container from '@/components/Container';
+import formatPrice from '@/utils/formatPrice';
+
 import { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { getUserPackageItemByType, bulkUpdate } from '@/api/user-package-option-api';
+import { SpinnerLoading } from '@/components/Loading';
 import { ReactGrid, CellChange, Row, Column, TextCell, Id, MenuOption, SelectionMode } from '@silevis/reactgrid';
-import { getByType, bulkUpdate } from '@/api/user-service-api';
-
-import Container from '@/components/Container';
 
 import '@silevis/reactgrid/styles.css';
-import formatPrice from '@/utils/formatPrice';
 
 interface UserServiceData {
   id?: string;
@@ -15,10 +17,10 @@ interface UserServiceData {
   order_number?: number;
 }
 
-const UserService: React.FC = () => {
+const UserPackageOption: React.FC = () => {
   const { type = '' } = useParams<{ type: string }>();
 
-  const [userServices, setUserServices] = useState<UserServiceData[]>([]);
+  const [userPackageOptions, setUserPackageOptions] = useState<UserServiceData[]>([]);
   const [modifiedRows, setModifiedRows] = useState<Set<number>>(new Set());
   const [deletedRows, setDeletedRows] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
@@ -27,15 +29,14 @@ const UserService: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await getByType(type);
+        const response = await getUserPackageItemByType(type);
         const services = response.data.map((service: any) => ({
           id: service.id,
           name: service.name,
           price: service.price.toString(),
           order_number: service.order_number,
         }));
-        setUserServices(services);
-        console.log(services);
+        setUserPackageOptions(services);
         setModifiedRows(new Set());
         setDeletedRows(new Set());
       } catch (error) {
@@ -68,7 +69,7 @@ const UserService: React.FC = () => {
         ],
         height: 35,
       },
-      ...userServices.map<Row>((service, idx) => ({
+      ...userPackageOptions.map<Row>((service, idx) => ({
         rowId: idx,
         cells: [
           { type: 'number', value: idx + 1, readOnly: true },
@@ -78,11 +79,11 @@ const UserService: React.FC = () => {
         height: 35,
       })),
     ],
-    [userServices]
+    [userPackageOptions]
   );
 
   const handleChanges = (changes: CellChange<TextCell>[]) => {
-    setUserServices((prevData) => {
+    setUserPackageOptions((prevData) => {
       const updatedData = applyChangesToData(changes, prevData);
 
       const newModifiedRows = new Set(modifiedRows);
@@ -130,7 +131,7 @@ const UserService: React.FC = () => {
     const updatedData = data.filter((_, idx) => !selectionRowIds.includes(idx));
 
     selectionRowIds.forEach((rowId) => {
-      const serviceId = userServices[rowId as number].id;
+      const serviceId = userPackageOptions[rowId as number].id;
       if (serviceId) {
         setDeletedRows((prev) => new Set(prev.add(serviceId)));
       }
@@ -152,24 +153,24 @@ const UserService: React.FC = () => {
           id: 'remove-row',
           label: 'Remove Row',
           handler: () => {
-            const updatedData = removeRow(userServices, selectionRowIds);
-            setUserServices(updatedData);
+            const updatedData = removeRow(userPackageOptions, selectionRowIds);
+            setUserPackageOptions(updatedData);
           },
         },
         {
           id: 'add-row-after',
           label: 'Add Row After',
           handler: () => {
-            const updatedData = addRow(userServices, selectionRowIds[0].toString(), true);
-            setUserServices(updatedData);
+            const updatedData = addRow(userPackageOptions, selectionRowIds[0].toString(), true);
+            setUserPackageOptions(updatedData);
           },
         },
         {
           id: 'add-row-before',
           label: 'Add Row Before',
           handler: () => {
-            const updatedData = addRow(userServices, selectionRowIds[0].toString(), false);
-            setUserServices(updatedData);
+            const updatedData = addRow(userPackageOptions, selectionRowIds[0].toString(), false);
+            setUserPackageOptions(updatedData);
           },
         },
       ];
@@ -179,7 +180,7 @@ const UserService: React.FC = () => {
   };
 
   const handleSave = async () => {
-    const modifiedData = userServices.map((service, idx) => ({
+    const modifiedData = userPackageOptions.map((service, idx) => ({
       id: service.id,
       name: service.name,
       price: parseInt(service.price),
@@ -187,7 +188,7 @@ const UserService: React.FC = () => {
     }));
 
     const deletedData = Array.from(deletedRows);
-    
+
     if (!modifiedRows.size && !deletedRows.size) {
       alert('No data to save');
       return;
@@ -201,16 +202,21 @@ const UserService: React.FC = () => {
 
     try {
       setLoading(true);
-
-      const response = await bulkUpdate(type, modifiedData, deletedData);
-
-      if (!response.success) {
-        console.error('Error saving data:', response.message);
-        alert('Error saving data');
-      } else {
-        console.log('Data saved:', response);
-        alert('Data saved successfully');
-      }
+      toast.promise(bulkUpdate(type, modifiedData, deletedData), {
+        pending: 'Menyimpan data...',
+        success: {
+          render({ data }) {
+            setLoading(false);
+            return (data as { message: string }).message;
+          },
+        },
+        error: {
+          render({ data }) {
+            setLoading(false);
+            return (data as { message: string }).message;
+          },
+        },
+      });
     } catch (error) {
       console.error('Error saving data:', error);
     } finally {
@@ -220,32 +226,34 @@ const UserService: React.FC = () => {
     }
   };
 
-  if (loading) {
-    return <p className="mt-10 mx-auto">Loading...</p>;
-  }
-
   return (
     <Container>
       <h1 className="text-3xl font-semibold mb-6">{type.replace(/-/g, ' ').toUpperCase()}</h1>
-      <ReactGrid
-        rows={rows}
-        columns={columns}
-        onCellsChanged={(changes) => {
-          const textCellChanges = changes.filter(
-            (change): change is CellChange<TextCell> => change.newCell.type === 'text'
-          );
-          handleChanges(textCellChanges);
-        }}
-        onContextMenu={handleContextMenu}
-        enableRangeSelection
-        enableRowSelection
-      />
+      {loading ? (
+        <SpinnerLoading />
+      ) : (
+        <>
+          <ReactGrid
+            rows={rows}
+            columns={columns}
+            onCellsChanged={(changes) => {
+              const textCellChanges = changes.filter(
+                (change): change is CellChange<TextCell> => change.newCell.type === 'text'
+              );
+              handleChanges(textCellChanges);
+            }}
+            onContextMenu={handleContextMenu}
+            enableRangeSelection
+            enableRowSelection
+          />
 
-      <button onClick={handleSave} className="bg-primary text-white px-4 py-2 mt-4">
-        Save
-      </button>
+          <button onClick={handleSave} className="bg-primary text-white px-4 py-2 mt-4">
+            Save
+          </button>
+        </>
+      )}
     </Container>
   );
 };
 
-export default UserService;
+export default UserPackageOption;

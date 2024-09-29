@@ -1,7 +1,7 @@
 import Container from '@/components/Container';
-import PacketForm from '@/components/PacketForm';
+import UserPackageForm from '@/components/UserPackageForm';
 
-const Packet: React.FC = () => {
+const CustomPackage: React.FC = () => {
   return (
     <>
       <section className="py-16 bg-image-linear-gradient bg-cover bg-center">
@@ -34,11 +34,11 @@ const Packet: React.FC = () => {
             <h1 className="text-base md:text-2xl font-medium text-dark text-center">Paket custom umrah</h1>
           </div>
 
-          <PacketForm />
+          <UserPackageForm />
         </Container>
       </section>
     </>
   );
 };
 
-export default Packet;
+export default CustomPackage;

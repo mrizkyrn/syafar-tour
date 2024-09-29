@@ -1,44 +1,55 @@
-import { useState, useEffect, SetStateAction } from 'react';
-import { useParams } from 'react-router-dom';
-import { get } from '@/api/calculation-api';
-import formatPrice from '@/utils/formatPrice';
 import Container from '@/components/Container';
-import { TextInput } from '@/components/Input';
+import ErrorTemplate from '@/components/ErrorTemplate';
+import formatPrice from '@/utils/formatPrice';
 
-interface CalculationData {
-  id: string;
-  number_of_pax: number;
-  transportation: string;
-  flight: string;
-  travel_duration: number;
-  mekkah_duration: number;
-  madinah_duration: number;
-  hotel_mekkah: string;
-  hotel_madinah: string;
-  muthawif: string;
-  handling: string;
-  total_price: number;
-  per_pax_price: number;
-}
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { getUserPackage } from '@/api/user-package-api';
+import { createUserPackageOrder } from '@/api/user-package-order-api';
+import { TextInput } from '@/components/Input';
+import { SpinnerLoading } from '@/components/Loading';
+import { useAuth } from '@/hook/AuthProvider';
+import { CreateUserPackageOrderRequest } from '@/types/UserPackageOrderType';
+import { UserPackageResponse } from '@/types/UserPackageType';
 
 const CalculationResult: React.FC = () => {
-  const [data, setData] = useState<CalculationData>({} as CalculationData);
-  const [loading, setLoading] = useState(false);
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
   const { id = '' } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const whatsappTo = '6287881311283';
+
+  const [data, setData] = useState<UserPackageResponse>({} as UserPackageResponse);
+  const [isOrder, setIsOrder] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [formData, setFormData] = useState<CreateUserPackageOrderRequest>({
+    user_package_id: id,
+    full_name: '',
+    email: '',
+    whatsapp_number: '',
+  });
+
+  useEffect(() => {
+    if (user) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        full_name: user.full_name,
+        email: user.email,
+        whatsapp_number: user.whatsapp_number,
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await get(id);
-        console.log(response);
+        setError('');
+        const response = await getUserPackage(id);
         setData(response.data);
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error fetching data:', error);
+        setError('Terjadi kesalahan. Silakan coba lagi nanti.');
       } finally {
         setLoading(false);
       }
@@ -47,16 +58,40 @@ const CalculationResult: React.FC = () => {
     fetchData();
   }, [id]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Submit form:', { name, email, whatsapp, data });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    toast.promise(createUserPackageOrder(formData), {
+      pending: 'Creating order...',
+      success: {
+        render({ data }) {
+          setIsOrder(true);
+          return (data as { message: string }).message;
+        },
+      },
+      error: {
+        render({ data }) {
+          console.error('Error creating order:', data);
+          return (data as { message: string }).message;
+        },
+      },
+    });
+  };
+
+  const sendMessage = () => {
     // Format the WhatsApp message
     const message = `
       Halo, saya tertarik untuk bergabung. Berikut detailnya:
 
-      Nama: ${name}
-      Email: ${email}
+      Nama: ${formData.full_name}
+      Email: ${formData.email}
 
       Detail Jamaah:
       - Jumlah Jamaah: ${data.number_of_pax} orang
@@ -83,15 +118,17 @@ const CalculationResult: React.FC = () => {
       Terima kasih.
     `;
 
-    const trimmedMessage = message.split('\n').map((line) => line.trim()).join('\n');
+    const trimmedMessage = message
+      .split('\n')
+      .map((line) => line.trim())
+      .join('\n');
 
     const whatsappUrl = `https://wa.me/${whatsappTo}?text=${encodeURIComponent(trimmedMessage)}`;
     window.open(whatsappUrl, '_blank');
   };
 
-  if (loading) {
-    return <p className="p-20 mx-auto">Loading...</p>;
-  }
+  if (loading) return <SpinnerLoading />;
+  if (error) return <ErrorTemplate message={error} />;
 
   return (
     <div className="bg-gray-50 min-h-screen flex justify-center items-center">
@@ -169,47 +206,71 @@ const CalculationResult: React.FC = () => {
               </div>
             </div>
 
-            {/* Konfirmasi Form */}
-            <div className="flex-1">
-              <h3 className="text-xl font-semibold mb-4">Konfirmasi</h3>
-              <form className="bg-gray-100 p-4 rounded-lg flex flex-col gap-2" onSubmit={handleSubmit}>
-                <div>
-                  <TextInput
-                    placeholder="Nama Lengkap"
-                    name="name"
-                    onChange={(e: { target: { value: SetStateAction<string>; }; }) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <TextInput
-                    type="email"
-                    placeholder="Email"
-                    name="email"
-                    onChange={(e: { target: { value: SetStateAction<string>; }; }) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <TextInput
-                    type="text"
-                    placeholder="Nomor Whatsapp"
-                    name="whatsapp"
-                    onChange={(e: { target: { value: SetStateAction<string>; }; }) => setWhatsapp(e.target.value)}
-                    required
-                  />
-                </div>
+            {/* Form */}
+            {isOrder ? (
+              // Continue contact admin for the order
+              <div className="flex-1">
+                <h3 className="text-xl font-semibold mb-4">Hubungi Kami</h3>
+                <p className="text-gray-600 mb-4">
+                  Anda sudah mengisi data diri. Silakan klik tombol di bawah untuk menghubungi kami melalui WhatsApp
+                  terkait pemesanan paket ini.
+                </p>
                 <button
-                  type="submit"
+                  onClick={sendMessage}
                   className="w-full mt-3 bg-primary text-white font-semibold py-2 rounded-lg hover:bg-primaryDark transition-colors"
                 >
-                  Kirim
+                  Hubungi Kami
                 </button>
-                <p className="text-sm text-gray-600 mt-2">
-                  Note: Setelah anda melengkapi data diri, Kami akan follow up lebih lanjut terkait kebutuhan anda.
-                </p>
-              </form>
-            </div>
+              </div>
+            ) : (
+              <div className="flex-1">
+                <h3 className="text-xl font-semibold mb-4">Konfirmasi</h3>
+                <form className="bg-gray-100 p-4 rounded-lg flex flex-col gap-2" onSubmit={handleSubmit}>
+                  <div>
+                    <TextInput
+                      placeholder="Nama Lengkap"
+                      name="full_name"
+                      onChange={handleChange}
+                      value={formData.full_name}
+                      required
+                      disabled={!!user}
+                    />
+                  </div>
+                  <div>
+                    <TextInput
+                      type="email"
+                      placeholder="Email"
+                      name="email"
+                      onChange={handleChange}
+                      value={formData.email}
+                      required
+                      disabled={!!user}
+                    />
+                  </div>
+                  <div>
+                    <TextInput
+                      type="text"
+                      placeholder="Nomor Whatsapp"
+                      name="whatsapp_number"
+                      onChange={handleChange}
+                      value={formData.whatsapp_number}
+                      required
+                      disabled={!!user}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full mt-3 bg-primary text-white font-semibold py-2 rounded-lg hover:bg-primaryDark transition-colors"
+                    disabled={loading}
+                  >
+                    {loading ? 'Loading...' : 'Pesan Sekarang'}
+                  </button>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Note: Setelah anda melengkapi data diri, Kami akan follow up lebih lanjut terkait kebutuhan anda.
+                  </p>
+                </form>
+              </div>
+            )}
           </div>
         </div>
       </Container>
