@@ -7,6 +7,7 @@ import { deleteUser, getAllUsers } from '@/api/user-api';
 import { PaginationResponse } from '@/types/PaginationType';
 import { UserQueryParams, UserResponse, UserRoles } from '@/types/UserType';
 import TableActions from '@/components/TableActions';
+import AddUserModal from './AddUserModal';
 
 const columns = [
   { label: 'Nama Lengkap', key: 'full_name' },
@@ -18,7 +19,8 @@ const columns = [
 
 const UserList: React.FC = () => {
   const [users, setUsers] = useState<UserResponse[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,12 +79,24 @@ const UserList: React.FC = () => {
 
   const handleEdit = (user: UserResponse) => {
     setSelectedUser(user);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const handleAdd = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
     setSelectedUser(null);
+  };
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const addUserToList = (newUser: UserResponse) => {
+    setUsers((prevUsers) => [newUser, ...prevUsers]);
   };
 
   const handleSort = (column: string) => {
@@ -111,7 +125,7 @@ const UserList: React.FC = () => {
 
   const updateUsers = (updatedUser: UserResponse) => {
     setUsers(users.map((user) => (user.id === updatedUser.id ? updatedUser : user)));
-  }
+  };
 
   const filteredUsers = useMemo(() => {
     return users.map((user, idx) => ({
@@ -121,8 +135,14 @@ const UserList: React.FC = () => {
   }, [users, searchParams.page, searchParams.limit]);
 
   return (
-    <div className="mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">List User</h1>
+    <div className="mx-auto">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-semibold text-dark">Manajemen User</h1>
+
+        <button onClick={handleAdd} className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primaryDark">
+          Tambah User
+        </button>
+      </div>
 
       {/* Search & Filter */}
       <div className="flex justify-between items-center mb-4">
@@ -220,11 +240,14 @@ const UserList: React.FC = () => {
 
       {/* Edit User Modal */}
       <EditUserModal
-        isModalOpen={isModalOpen}
+        isModalOpen={isEditModalOpen}
         selectedUser={selectedUser}
         updateUsers={updateUsers}
-        closeModal={closeModal}
+        closeModal={closeEditModal}
       />
+
+      {/* Add User Modal */}
+      <AddUserModal isModalOpen={isAddModalOpen} addUserToList={addUserToList} closeModal={closeAddModal} />
     </div>
   );
 };

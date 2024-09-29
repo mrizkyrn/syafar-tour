@@ -1,34 +1,23 @@
-import { useEffect, useState } from 'react';
-import { UpdateUserRequest, UserResponse, UserRoles } from '@/types/UserType';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { updateUser } from '@/api/user-api';
+import { createUser } from '@/api/user-api';
+import { UserResponse, CreateUserRequest } from '@/types/UserType';
 
-interface EditUserModalProps {
+interface AddUserModalProps {
   isModalOpen: boolean;
-  selectedUser: UserResponse | null;
-  updateUsers: (updatedUser: UserResponse) => void;
+  addUserToList: (newUser: UserResponse) => void;
   closeModal: () => void;
 }
 
-const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser, updateUsers, closeModal }) => {
-  const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+const AddUserModal: React.FC<AddUserModalProps> = ({ isModalOpen, addUserToList, closeModal }) => {
+  const [formData, setFormData] = useState<CreateUserRequest>({
     full_name: '',
     email: '',
     whatsapp_number: '',
+    password: '',
     role: 'USER',
   });
-
-  useEffect(() => {
-    if (selectedUser) {
-      setFormData({
-        full_name: selectedUser.full_name,
-        email: selectedUser.email,
-        whatsapp_number: selectedUser.whatsapp_number,
-        role: selectedUser.role,
-      });
-    }
-  }, [selectedUser]);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -37,29 +26,16 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedUser) return;
-
-    const updatedData: UpdateUserRequest = {};
-
-    if (formData.full_name !== selectedUser?.full_name) {
-      updatedData.full_name = formData.full_name;
-    }
-    if (formData.whatsapp_number !== selectedUser?.whatsapp_number) {
-      updatedData.whatsapp_number = formData.whatsapp_number;
-    }
-    if (formData.role !== selectedUser?.role) {
-      updatedData.role = formData.role as UserRoles;
-    }
-
     setLoading(true);
-    toast.promise(updateUser(selectedUser.id, updatedData), {
-      pending: 'Memperbarui user...',
+
+    toast.promise(createUser(formData), {
+      pending: 'Memproses...',
       success: {
         render({ data }) {
           setLoading(false);
-          updateUsers(data.data);
+          addUserToList(data.data);
           closeModal();
-          return (data as { message: string }).message;
+          return 'User berhasil dibuat!';
         },
       },
       error: {
@@ -76,7 +52,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-        <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+        <h2 className="text-xl font-semibold mb-4">Add New User</h2>
 
         <form className="mt-4" onSubmit={onSubmit}>
           <div className="mb-4">
@@ -87,6 +63,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
               value={formData.full_name}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+              required
             />
           </div>
           <div className="mb-4">
@@ -97,7 +74,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
               value={formData.email}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
-              disabled
+              required
             />
           </div>
           <div className="mb-4">
@@ -108,6 +85,18 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
               value={formData.whatsapp_number}
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-600">Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
+              required
             />
           </div>
           <div className="mb-4">
@@ -118,9 +107,9 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
               onChange={handleChange}
               className="w-full px-4 py-2 border rounded-lg mt-1 focus:outline-none focus:border-blue-500"
             >
-              <option value="ADMIN">ADMIN</option>
-              <option value="USER">USER</option>
-              <option value="MITRA">MITRA</option>
+              <option value="ADMIN">Admin</option>
+              <option value="USER">User</option>
+              <option value="MITRA">Mitra</option>
             </select>
           </div>
           <div className="mt-6">
@@ -129,7 +118,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
               className="w-full py-2 px-4 bg-primary text-white rounded-lg hover:bg-primaryDark"
               disabled={loading}
             >
-              {loading ? 'Loading...' : 'Perbarui'}
+              {loading ? 'Loading...' : 'Tambah'}
             </button>
             <button
               type="button"
@@ -145,4 +134,4 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isModalOpen, selectedUser
   );
 };
 
-export default EditUserModal;
+export default AddUserModal;

@@ -130,8 +130,8 @@ const UserPackageOrder: React.FC = () => {
   if (error) return <ErrorTemplate message={error} />;
 
   return (
-    <div className="mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Order Paket Jamaah</h1>
+    <div className="mx-auto">
+      <h1 className="text-3xl font-semibold mb-8 text-dark">Order Paket Jamaah</h1>
 
       {/* Search & Filter */}
       <div className="flex justify-between items-center mb-4">

@@ -21,6 +21,14 @@ export type LoginUserRequest = {
   password: string;
 };
 
+export type CreateUserRequest = {
+  full_name: string;
+  email: string;
+  whatsapp_number: string;
+  password: string;
+  role: UserRoles;
+};
+
 export type UpdateUserRequest = {
   full_name?: string;
   email?: string;

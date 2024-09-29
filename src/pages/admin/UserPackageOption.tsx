@@ -1,4 +1,3 @@
-import Container from '@/components/Container';
 import formatPrice from '@/utils/formatPrice';
 
 import { useState, useEffect, useMemo } from 'react';
@@ -227,8 +226,9 @@ const UserPackageOption: React.FC = () => {
   };
 
   return (
-    <Container>
-      <h1 className="text-3xl font-semibold mb-6">{type.replace(/-/g, ' ').toUpperCase()}</h1>
+    <div className="mx-auto">
+      <h1 className="text-3xl font-semibold mb-8 text-dark capitalize">{type.replace(/-/g, ' ')}</h1>
+      
       {loading ? (
         <SpinnerLoading />
       ) : (
@@ -252,7 +252,7 @@ const UserPackageOption: React.FC = () => {
           </button>
         </>
       )}
-    </Container>
+    </div>
   );
 };
 

@@ -7,6 +7,16 @@ const api = axios.create({
   withCredentials: true,
 });
 
+export const createUser = async (data: UpdateUserRequest) => {
+  try {
+    const response = await api.post('/', data);
+    return response.data;
+  } catch (error: any) {
+    console.error(error.response.data);
+    throw error.response.data;
+  }
+};
+
 export const getAllUsers = async (params: UserQueryParams) => {
   try {
     const response = await api.get('/', { params });
