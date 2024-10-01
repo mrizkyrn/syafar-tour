@@ -1,11 +1,11 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BASE_URL}/v1/category`,
+  baseURL: `${import.meta.env.VITE_BASE_URL}/v1/categories`,
   withCredentials: true,
 });
 
-export const getAllCategory = async () => {
+export const getAllCategories = async () => {
   try {
     const response = await api.get('/');
     return response.data;

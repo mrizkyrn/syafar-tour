@@ -1,48 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { getAllOrder } from '@/api/order-api';
+import { getAllProductOrder } from '@/api/product-order-api';
 import formatPrice from '@/utils/formatPrice';
-
-interface Order {
-  id: string;
-  user_id: string;
-  product_id: string;
-  variation: string | null;
-  departure: string;
-  number_of_pax: number;
-  per_pax_price: number;
-  total_price: number;
-  created_at: string;
-  updated_at: string;
-  Product: {
-    name: string;
-  };
-  User: {
-    full_name: string;
-    email: string;
-    whatsapp_number: string;
-  };
-}
+import { ProductOrderResponse } from '@/types/ProductOrderType';
+import { Link } from 'react-router-dom';
 
 const ProductOrder: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [productOrders, setProductOrders] = useState<ProductOrderResponse[]>([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const response = await getAllOrder();
+      const response = await getAllProductOrder();
 
       if (response.success) {
-        setOrders(response.data);
+        setProductOrders(response.data);
       }
     };
 
     fetchOrders();
   }, []);
 
-  console.log(orders);
-
   return (
-    <div className="mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Product Orders</h1>
+    <div className="mx-auto">
+      <h1 className="text-3xl font-semibold mb-8 text-dark">Order Produk</h1>
 
       <div className="overflow-x-auto max-w-full">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg text-sm">
@@ -62,15 +41,19 @@ const ProductOrder: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {orders.map((order, idx) => (
+            {productOrders.map((order, idx) => (
               <tr key={order.id} className="hover:bg-gray-50">
                 <td className="px-6 py-2 border-b">{idx + 1}</td>
-                <td className="px-6 py-2 border-b">{order.User.full_name}</td>
-                <td className="px-6 py-2 border-b">{order.User.whatsapp_number}</td>
-                <td className="px-6 py-2 border-b">{order.User.email}</td>
-                <td className="px-6 py-2 border-b">{order.Product.name}</td>
-                <td className="px-6 py-2 border-b">{order.variation || '-'}</td>
-                <td className="px-6 py-2 border-b">{order.departure.split('T')[0]}</td>
+                <td className="px-6 py-2 border-b">{order.user.full_name}</td>
+                <td className="px-6 py-2 border-b">{order.user.whatsapp_number}</td>
+                <td className="px-6 py-2 border-b">{order.user.email}</td>
+                <td className="px-6 py-2 border-b">
+                <Link to={`/produk/${order.product_id}`} className="text-blue-500 hover:underline">
+                  <p className="text-blue-500 hover:underline cursor-pointer">{order.product_name}</p>
+                </Link>
+                </td>
+                <td className="px-6 py-2 border-b">{order.variation?.name || '-'}</td>
+                <td className="px-6 py-2 border-b">{new Date(order.departure).toISOString().split('T')[0]}</td>
                 <td className="px-6 py-2 border-b">{order.number_of_pax}</td>
                 <td className="px-6 py-2 border-b">{formatPrice(order.per_pax_price)}</td>
                 <td className="px-6 py-2 border-b">{formatPrice(order.total_price)}</td>

@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hook/AuthProvider';
-import { get } from '@/api/product-api';
-import { createOrder } from '@/api/order-api';
-import { Product } from '@/types/ProductType';
+import { getProduct } from '@/api/product-api';
+import { createProductOrder } from '@/api/product-order-api';
+import { ProductResponse } from '@/types/ProductType';
 import { FaCheck, FaTimes, FaAngleDown, FaAngleUp, FaUsers } from 'react-icons/fa';
 import Container from '@/components/Container';
 import formatPrice from '@/utils/formatPrice';
 import parse from 'html-react-parser';
+import { SpinnerLoading } from '@/components/Loading';
+import { CreateProductOrderRequest } from '@/types/ProductOrderType';
 
 const DetailProduct: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,7 +17,7 @@ const DetailProduct: React.FC = () => {
   const navigate = useNavigate();
   const whatsappTo = '6287881311283';
 
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<ProductResponse>();
   const [participantCount, setParticipantCount] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [isParticipantOpen, setIsParticipantOpen] = useState(false);
@@ -35,7 +37,7 @@ const DetailProduct: React.FC = () => {
       try {
         setLoading(true);
         if (id) {
-          const response = await get(id);
+          const response = await getProduct(id);
           setProduct(response.data);
 
           if (response.data.variations.length > 0) {
@@ -76,10 +78,10 @@ const DetailProduct: React.FC = () => {
     if (!product || !user || !selectedDate) return;
 
     try {
-      const order = {
+      const order: CreateProductOrderRequest = {
         product_id: product.id,
-        variation: selectedVariation !== null ? product.variations[selectedVariation].name : '',
-        departure: selectedDate.toISOString(),
+        variation_id: selectedVariation !== null ? product.variations[selectedVariation].id : undefined,
+        departure: selectedDate,
         number_of_pax: participantCount,
         per_pax_price: selectedVariation !== null ? Number(product.variations[selectedVariation].price) : product.price,
         total_price:
@@ -88,7 +90,7 @@ const DetailProduct: React.FC = () => {
             : (product.price ?? 0) * participantCount,
       };
 
-      const response = await createOrder(order);
+      const response = await createProductOrder(order);
 
       if (!response.success) {
         console.error('Error creating order:', response.message);
@@ -130,9 +132,7 @@ const DetailProduct: React.FC = () => {
     window.open(whatsappUrl, '_blank');
   };
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (loading) return <SpinnerLoading message="Loading..." />;
 
   if (error) {
     return <p>{error}</p>;
@@ -150,7 +150,7 @@ const DetailProduct: React.FC = () => {
             {/* Main Image */}
             <div>
               <img
-                src={import.meta.env.VITE_BASE_URL + product.thumbnail}
+                src={import.meta.env.VITE_BASE_URL + product.thumbnails[0].image_url}
                 alt="Main Umrah Image"
                 className="w-full h-[450px] object-cover rounded-lg"
               />
@@ -179,7 +179,7 @@ const DetailProduct: React.FC = () => {
                       {product.includes.map((item, index) => (
                         <li key={index} className="flex items-center gap-2">
                           <FaCheck className="text-green-500 min-w-6" />
-                          <span>{item}</span>
+                          <span>{item.description}</span>
                         </li>
                       ))}
                     </ul>
@@ -190,7 +190,7 @@ const DetailProduct: React.FC = () => {
                       {product.excludes.map((item, index) => (
                         <li key={index} className="flex items-center gap-2">
                           <FaTimes className="text-red-500 min-w-6" />
-                          <span>{item}</span>
+                          <span>{item.description}</span>
                         </li>
                       ))}
                     </ul>

@@ -1,18 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Product } from '@/types/ProductType';
-import { getAll } from '@/api/product-api';
+import { ProductResponse } from '@/types/ProductType';
+import { getAllProducts } from '@/api/product-api';
 import Container from '@/components/Container';
 import ProductCard from '@/components/cards/ProductCard';
 
 const ProductSection: React.FC = () => {
   const navigate = useNavigate();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductResponse[]>([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await getAll();
-      setProducts(response.data);
+      const response = await getAllProducts();
+      setProducts(response.data.data);
     };
 
     fetchProducts();
@@ -31,46 +31,49 @@ const ProductSection: React.FC = () => {
               Anda.
             </p>
           </div>
+          {products.length > 0 && (
+            <>
+              <div className="flex flex-col justify-center items-center gap-9 mb-12">
+                <h2 className="text-xl md:text-3xl font-semibold text-dark text-start w-full">Paket Umrah</h2>
 
-          <div className="flex flex-col justify-center items-center gap-9 mb-12">
-            <h2 className="text-xl md:text-3xl font-semibold text-dark text-start w-full">Paket Umrah</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
+                  {products
+                    ?.filter((product) => product.categories.some((category) => category.name === 'Paket Umroh'))
+                    .slice(0, 3)
+                    .map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
-              {products
-                ?.filter((product) => product.categories.some((category) => category.name === 'Paket Umroh'))
-                .slice(0, 3)
-                .map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-            </div>
+                <button
+                  className="px-12 text-xs md:text-base border border-dark text-dark font-semibold py-3 rounded-lg hover:bg-dark hover:text-white transition-all duration-200"
+                  onClick={() => navigate('/produk')}
+                >
+                  Selengkapnya
+                </button>
+              </div>
 
-            <button
-              className="px-12 text-xs md:text-base border border-dark text-dark font-semibold py-3 rounded-lg hover:bg-dark hover:text-white transition-all duration-200"
-              onClick={() => navigate('/produk')}
-            >
-              Selengkapnya
-            </button>
-          </div>
+              <div className="flex flex-col justify-center items-center gap-9">
+                <h2 className="text-xl md:text-3xl font-semibold text-dark text-start w-full">Visa Umrah</h2>
 
-          <div className="flex flex-col justify-center items-center gap-9">
-            <h2 className="text-xl md:text-3xl font-semibold text-dark text-start w-full">Visa Umrah</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
+                  {products
+                    ?.filter((product) => product.categories.some((category) => category.name === 'Visa Umroh'))
+                    .slice(0, 3)
+                    .map((product) => (
+                      <ProductCard key={product.id} product={product} />
+                    ))}
+                </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-14 w-full">
-              {products
-                ?.filter((product) => product.categories.some((category) => category.name === 'Visa Umroh'))
-                .slice(0, 3)
-                .map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-            </div>
-
-            <button
-              className="px-12 text-xs md:text-base border border-dark text-dark font-semibold py-3 rounded-lg hover:bg-dark hover:text-white transition-all duration-200"
-              onClick={() => navigate('/produk')}
-            >
-              Selengkapnya
-            </button>
-          </div>
+                <button
+                  className="px-12 text-xs md:text-base border border-dark text-dark font-semibold py-3 rounded-lg hover:bg-dark hover:text-white transition-all duration-200"
+                  onClick={() => navigate('/produk')}
+                >
+                  Selengkapnya
+                </button>
+              </div>
+            </>
+          )}
         </Container>
       </section>
     </>

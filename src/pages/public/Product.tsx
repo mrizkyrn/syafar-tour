@@ -1,25 +1,25 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react';
-import { Category, Product as ProductType } from '@/types/ProductType';
-import { getAll } from '@/api/product-api';
-import { getAllCategory } from '@/api/category-api';
 import Container from '@/components/Container';
 import ProductCard from '@/components/cards/ProductCard';
 
+import { useState, useEffect } from 'react';
+import { getAllCategories } from '@/api/category-api';
+import { getAllProducts } from '@/api/product-api';
+import { Category, ProductResponse } from '@/types/ProductType';
+
 const Product: React.FC = () => {
-  const [products, setProducts] = useState<ProductType[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ProductType[]>([]);
+  const [products, setProducts] = useState<ProductResponse[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductResponse[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [activeCategory, setActiveCategory] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const response = await getAll();
-      setProducts(response.data);
+      const response = await getAllProducts();
+      setProducts(response.data.data);
     };
 
     const fetchCategories = async () => {
-      const response = await getAllCategory();
+      const response = await getAllCategories();
       setCategories(response.data);
       setActiveCategory(response.data[0].name);
     };
@@ -39,7 +39,10 @@ const Product: React.FC = () => {
   };
 
   useEffect(() => {
-    filterProducts('Paket Umroh');
+    if (activeCategory) {
+      filterProducts(activeCategory);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [products]);
 
   return (
@@ -51,8 +54,7 @@ const Product: React.FC = () => {
         </div>
 
         <div className="flex items-center mb-8 md:mb-12 w-full bg-[#F3F3F3]">
-        {
-          categories.map((category, index) => (
+          {categories.map((category, index) => (
             <button
               key={index}
               onClick={() => filterProducts(category.name)}
@@ -62,8 +64,7 @@ const Product: React.FC = () => {
             >
               {category.name}
             </button>
-          ))
-        }
+          ))}
         </div>
 
         {/* Display the filtered products */}

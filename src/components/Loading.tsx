@@ -25,7 +25,7 @@ interface SpinnerLoadingProps {
 
 export const SpinnerLoading: React.FC<SpinnerLoadingProps> = ({ message }) => {
   return (
-    <div className="flex justify-center items-center h-full py-28">
+    <div className="flex justify-center flex-col items-center h-full py-28">
       <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
       {message && <p className="text-center text-lg mt-5">{message}</p>}
     </div>

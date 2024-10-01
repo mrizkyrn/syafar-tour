@@ -1,27 +1,38 @@
+import { ProductQueryParams } from '@/types/ProductType';
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: `${import.meta.env.VITE_BASE_URL}/v1/product`,
+  baseURL: `${import.meta.env.VITE_BASE_URL}/v1/products`,
   withCredentials: true,
 });
 
-export const getAll = async () => {
+export const getAllProductsWithQuery = async (params: ProductQueryParams) => {
+  try {
+    const response = await api.get('/', { params });
+    return response.data;
+  } catch (error: any) {
+    console.error(error.response.data);
+    throw error.response.data;
+  }
+};
+
+export const getAllProducts = async () => {
   try {
     const response = await api.get('/');
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
-};
+}
 
-export const get = async (id: string) => {
+export const getProduct = async (id: string) => {
   try {
     const response = await api.get(`/${id}`);
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 }
 
@@ -31,17 +42,17 @@ export const createProduct = async (product: any) => {
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
-export const update = async (id: string, product: any) => {
+export const updateProduct = async (id: string, product: any) => {
   try {
     const response = await api.patch(`/${id}`, product);
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };
 
@@ -51,6 +62,6 @@ export const deleteProduct = async (id: string) => {
     return response.data;
   } catch (error: any) {
     console.error(error.response.data);
-    return error.response.data;
+    throw error.response.data;
   }
 };

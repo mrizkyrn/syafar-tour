@@ -1,16 +1,16 @@
 import React from 'react';
-import { Product } from '@/types/ProductType';
+import { ProductResponse } from '@/types/ProductType';
 import { Link } from 'react-router-dom';
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductResponse;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  return (// move to up when hover
+  return (
     <Link to={`/produk/${product.id}`} className="relative w-full flex flex-col gap-4 p-5 bg-white shadow-md hover:shadow-lg hover:-translate-y-3 transition duration-300 ease-in-out">
       <img
-        src={import.meta.env.VITE_BASE_URL + product.thumbnail}
+        src={import.meta.env.VITE_BASE_URL + product.thumbnails[0].image_url}
         alt={product.name}
         className="object-cover rounded-lg w-full h-full lg:w-auto"
       />

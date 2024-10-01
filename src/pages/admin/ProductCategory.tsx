@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getAllCategory, createCategory, updateCategory, deleteCategory } from '@/api/category-api';
+import { getAllCategories, createCategory, updateCategory, deleteCategory } from '@/api/category-api';
+
+interface Category {
+  id: string;
+  name: string;
+}
 
 const ProductCategory: React.FC = () => {
-  interface Category {
-    id: string;
-    name: string;
-    has_variation: boolean;
-  }
-  
   const [categories, setCategories] = useState<Category[]>([]);
   const [newCategory, setNewCategory] = useState({ name: '', has_variation: false });
   const [editCategory, setEditCategory] = useState<Category | null>(null);
@@ -20,7 +19,7 @@ const ProductCategory: React.FC = () => {
   // Fetch all categories
   const fetchCategories = async () => {
     try {
-      const response = await getAllCategory();
+      const response = await getAllCategories();
       setCategories(response.data);
     } catch (error) {
       console.error('Error fetching categories:', error);
@@ -40,6 +39,9 @@ const ProductCategory: React.FC = () => {
 
   // Handle delete category
   const handleDelete = async (id: string) => {
+    const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus kategori ini?');
+    if (!confirmDelete) return;
+
     try {
       await deleteCategory(id);
       fetchCategories(); // Refresh categories
@@ -62,8 +64,8 @@ const ProductCategory: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Category Management</h1>
+    <div className="mx-auto">
+      <h1 className="text-3xl font-semibold mb-8 text-dark">Manajemen Kategori</h1>
 
       {/* Create new category form */}
       <div className="mb-8 p-4 border rounded-lg bg-gray-100 shadow-md">
@@ -75,15 +77,6 @@ const ProductCategory: React.FC = () => {
           onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
           className="p-2 border rounded-md mb-2 w-full"
         />
-        <label className="flex items-center mb-4">
-          <input
-            type="checkbox"
-            checked={newCategory.has_variation}
-            onChange={(e) => setNewCategory({ ...newCategory, has_variation: e.target.checked })}
-            className="mr-2"
-          />
-          Has Variation
-        </label>
         <button
           onClick={handleCreate}
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
@@ -97,16 +90,15 @@ const ProductCategory: React.FC = () => {
         <h2 className="text-xl font-semibold mb-4">Categories</h2>
         <ul className="space-y-4 list-none">
           {categories.map((category) => (
-            <li key={category.id} className="p-4 border rounded-lg shadow-md flex justify-between items-center">
+            <li key={category.id} className="p-4 border rounded-lg flex justify-between items-center">
               <div>
-                <span className="font-medium">{category.name}</span> -{' '}
-                {category.has_variation ? 'Has Variation' : 'No Variation'}
+                <p className="font-medium">{category.name}</p>
               </div>
               <div className="flex space-x-2">
                 <button
                   onClick={() => {
                     setSelectedCategoryId(category.id);
-                    setEditCategory({ id: category.id, name: category.name, has_variation: category.has_variation });
+                    setEditCategory({ id: category.id, name: category.name });
                   }}
                   className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition"
                 >
@@ -134,15 +126,6 @@ const ProductCategory: React.FC = () => {
             onChange={(e) => setEditCategory({ ...editCategory, name: e.target.value })}
             className="p-2 border rounded-md mb-2 w-full"
           />
-          <label className="flex items-center mb-4">
-            <input
-              type="checkbox"
-              checked={editCategory.has_variation}
-              onChange={(e) => setEditCategory({ ...editCategory, has_variation: e.target.checked })}
-              className="mr-2"
-            />
-            Has Variation
-          </label>
           <button
             onClick={handleUpdate}
             className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition"

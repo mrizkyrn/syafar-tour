@@ -1,43 +1,40 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProduct } from '@/api/product-api';
-import { getAllCategory } from '@/api/category-api';
-import { CreateProductRequest } from '@/types/ProductType';
+import { getAllCategories } from '@/api/category-api';
+import { Category, CreateProductRequest } from '@/types/ProductType';
 import { CiCirclePlus, CiCircleRemove } from 'react-icons/ci';
+import { toast } from 'react-toastify';
 import ReactQuill from 'react-quill';
 import Select from 'react-select';
 import formatPrice from '@/utils/formatPrice';
 
-import 'react-quill/dist/quill.snow.css'
-
-type Category = {
-  id: string;
-  name: string;
-};
+import 'react-quill/dist/quill.snow.css';
 
 const CreateProduct: React.FC = () => {
   const [formData, setFormData] = useState<CreateProductRequest>({
-    thumbnail: null,
     name: '',
     description: '',
     price: 0,
+    has_variation: false,
+    thumbnails: [],
     category_ids: [],
     variations: [],
-    images: [],
     includes: [],
     excludes: [],
   });
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await getAllCategory();
-        setCategories(response.data); // Assuming response.data is an array of categories
+        const response = await getAllCategories();
+        setCategories(response.data);
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
@@ -47,17 +44,10 @@ const CreateProduct: React.FC = () => {
 
   // Handle file input changes
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, files } = e.target;
+    const { files } = e.target;
     if (!files) return;
 
-    if (name === 'thumbnail') {
-      setFormData((prev) => ({ ...prev, thumbnail: files[0] }));
-    } else if (name === 'images') {
-      setFormData((prev) => ({
-        ...prev,
-        images: Array.from(files),
-      }));
-    }
+    setFormData((prev) => ({ ...prev, thumbnails: Array.from(files) }));
   };
 
   // Handle input field changes
@@ -87,8 +77,7 @@ const CreateProduct: React.FC = () => {
     const updatedVariations = [...(formData.variations ?? [])];
     if (key === 'price') {
       const rawPrice = value.replace(/[Rp,.]/g, '').trim();
-      const price = rawPrice ? rawPrice : '';
-
+      const price = rawPrice ? parseInt(rawPrice) : 0;
       updatedVariations[index] = { ...updatedVariations[index], [key]: price };
     } else {
       updatedVariations[index] = { ...updatedVariations[index], [key]: value };
@@ -96,23 +85,27 @@ const CreateProduct: React.FC = () => {
     setFormData((prev) => ({
       ...prev,
       variations: updatedVariations,
+      has_variation: updatedVariations.length > 0,
     }));
   };
 
   // Add a new variation
   const addVariation = () => {
-    setFormData((prev) => ({
-      ...prev,
-      variations: [...(prev.variations ?? []), { name: '', price: '' }],
-    }));
-  };
-
-  // Remove a variation
-  const removeVariation = (index: number) => {
-    const updatedVariations = formData.variations?.filter((_, i) => i !== index);
+    const updatedVariations = [...(formData.variations ?? []), { name: '', price: 0 }];
     setFormData((prev) => ({
       ...prev,
       variations: updatedVariations,
+      has_variation: updatedVariations.length > 0,
+    }));
+  };
+  
+  // Remove a variation
+  const removeVariation = (index: number) => {
+    const updatedVariations = (formData.variations ?? []).filter((_, i) => i !== index);
+    setFormData((prev) => ({
+      ...prev,
+      variations: updatedVariations,
+      has_variation: updatedVariations.length > 0,
     }));
   };
 
@@ -171,51 +164,62 @@ const CreateProduct: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Create a FormData object to handle file uploads
     const data = new FormData();
-    data.append('thumbnail', formData.thumbnail as Blob);
-    formData.images?.forEach((image) => {
-      data.append('images', image); // Append multiple images
-    });
-    data.append('name', formData.name);
-    data.append('description', formData.description);
-    data.append('price', formData.price.toString());
-    formData.category_ids.forEach((category) => data.append('category_ids[]', category));
 
-    // Handle variations
+    formData.thumbnails?.forEach((thumbnail) => {
+      data.append('thumbnails', thumbnail);
+    });
+
+    data.append('name', formData.name);
+    data.append('description', formData.description || '');
+    data.append('price', formData.has_variation ? '0' : (formData.price ?? 0).toString());
+    data.append('has_variation', formData.has_variation.toString());
+
+    // Append category IDs
+    formData.category_ids?.forEach((categoryId) => {
+      data.append('category_ids[]', categoryId);
+    });
+
+    // Append variations
     formData.variations?.forEach((variation, index) => {
       data.append(`variations[${index}][name]`, variation.name);
-      data.append(`variations[${index}][price]`, variation.price);
+      data.append(`variations[${index}][price]`, variation.price.toString());
     });
 
-    // Handle includes
+    // Append includes
     formData.includes?.forEach((include, index) => {
       data.append(`includes[${index}]`, include);
     });
 
-    // Handle excludes
+    // Append excludes
     formData.excludes?.forEach((exclude, index) => {
       data.append(`excludes[${index}]`, exclude);
     });
 
-    try {
-      const response = await createProduct(data);
-
-      if (!response.success) {
-        console.error('Error creating product:', response.message);
-        return;
-      }
-
-      navigate('/admin/produk/list');
-    } catch (error) {
-      console.error('Error creating product:', error);
-    }
+    setLoading(true);
+    toast.promise(createProduct(data), {
+      pending: 'Menambahkan produk...',
+      success: {
+        render() {
+          setLoading(false);
+          navigate('/admin/produk/list');
+          return 'Produk berhasil ditambahkan';
+        },
+      },
+      error: {
+        render({ data }) {
+          setLoading(false);
+          console.error('Error creating product:', data);
+          return (data as { message: string }).message;
+        },
+      },
+    });
   };
 
   return (
-    <div className="mx-auto p-4">
+    <div className="mx-auto">
       <form onSubmit={handleSubmit} className="flex flex-col gap-5 md:gap-7" encType="multipart/form-data">
-        <h1 className="text-3xl font-bold mb-4">Create Product</h1>
+        <h1 className="text-3xl font-semibold mb-8 text-dark">Tambah Produk</h1>
 
         {/* Thumbnail */}
         <div>
@@ -226,6 +230,7 @@ const CreateProduct: React.FC = () => {
             accept="image/*"
             onChange={handleFileChange}
             className="mt-1 block w-full border border-gray-300 rounded-md"
+            multiple
             required
           />
         </div>
@@ -244,7 +249,14 @@ const CreateProduct: React.FC = () => {
         </div>
 
         {/* Description */}
-        <ReactQuill theme="snow" value={formData.description} onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))} />
+        <div>
+          <label className="block mb-2 font-medium">Deskripsi</label>
+          <ReactQuill
+            theme="snow"
+            value={formData.description}
+            onChange={(value) => setFormData((prev) => ({ ...prev, description: value }))}
+          />
+        </div>
 
         {/* Price */}
         <div>
@@ -252,9 +264,12 @@ const CreateProduct: React.FC = () => {
           <input
             type="text"
             name="price"
-            value={formatPrice(formData.price)}
+            value={formatPrice(formData.price ?? 0)}
             onChange={handleInputChange}
-            className="mt-1 p-2 block w-full border border-gray-300 rounded-md"
+            className={`mt-1 p-2 block w-full border border-gray-300 rounded-md ${
+              formData.has_variation ? 'bg-gray-200 text-gray-500' : ''
+            }`}
+            disabled={formData.has_variation}
             required
           />
         </div>
@@ -273,19 +288,6 @@ const CreateProduct: React.FC = () => {
             required
           />
         </div>
-
-        {/* Images */}
-        {/* <div>
-          <label className="block mb-2 font-medium">Images</label>
-          <input
-            type="file"
-            name="images"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-            className="mt-1 block w-full border border-gray-300 rounded-md"
-          />
-        </div> */}
 
         {/* Variations Section */}
         <div className="flex justify-between items-start">
@@ -374,8 +376,9 @@ const CreateProduct: React.FC = () => {
         <button
           type="submit"
           className="bg-primary text-center text-white text-sm md:text-base px-6 sm:px-10 py-2 rounded-md hover:bg-primaryDark transition-colors duration-300"
+          disabled={loading}
         >
-          Create Product
+          {loading ? 'Loading...' : 'Tambah Produk'}
         </button>
       </form>
     </div>
