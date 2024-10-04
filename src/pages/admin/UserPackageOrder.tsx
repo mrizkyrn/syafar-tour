@@ -33,7 +33,7 @@ const UserPackageOrder: React.FC = () => {
   const [searchParams, setSearchParams] = useState<UserPackageOrderQueryParams>({
     search: '',
     sort: 'created_at',
-    order: 'asc' as 'asc' | 'desc',
+    order: 'desc' as 'asc' | 'desc',
     page: 1,
     limit: 10,
   });
@@ -48,18 +48,21 @@ const UserPackageOrder: React.FC = () => {
     setLoading(true);
     setError(null);
 
-    const response = await getAllUserPackageOrders(searchParams);
+    try {
+      const response = await getAllUserPackageOrders(searchParams);
 
-    if (response.success) {
-      setOrders(response.data.data);
-      setPagination(response.data.pagination);
-
-      setSearchParams((prev) => ({ ...prev }));
-    } else {
-      setError(response.message);
+      if (response.success) {
+        setOrders(response.data.data);
+        setPagination(response.data.pagination);
+      } else {
+        setError(response.message);
+      }
+    } catch (error: any) {
+      console.error(error);
+      setError('Terjadi kesalahan saat mengambil data');
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -208,9 +211,6 @@ const UserPackageOrder: React.FC = () => {
         </table>
       </div>
 
-      {/* Error and Loading */}
-      {loading && <p>Loading...</p>}
-
       {/* Pagination */}
       <Pagination
         currentPage={pagination.current_page}
@@ -218,6 +218,9 @@ const UserPackageOrder: React.FC = () => {
         onPageChange={handlePageChange}
       />
 
+      {/* Error and Loading */}
+      {loading && <p>Loading...</p>}
+      
       {/* Detail Modal */}
       {isDetailModalOpen && selectedPackage && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">

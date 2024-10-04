@@ -1,8 +1,9 @@
+import Logo from './Logo';
+
 import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FaChevronDown, FaChevronUp, FaAngleRight, FaAngleLeft } from 'react-icons/fa';
 import { getAllPakcageTypes } from '@/api/package-type-api';
-import Logo from './Logo';
 
 interface ServiceType {
   id: string;
@@ -11,10 +12,10 @@ interface ServiceType {
 
 const AdminSidebar: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isUserServiceOpen, setIsUserServiceOpen] = useState(false);
+  const [isUserPackageOpen, setUserPackageOpen] = useState(false);
+  const [isMitraPackageOpen, setMitraPackageOpen] = useState(false);
   const [isProductOpen, setIsProductOpen] = useState(false);
   const [isOrderOpen, setIsOrderOpen] = useState(false);
-  // const [isUserOpen, setIsUserOpen] = useState(false);
   const [ServiceType, setServiceType] = useState<ServiceType[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,10 +37,6 @@ const AdminSidebar: React.FC = () => {
 
   const parseName = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, '-');
-  };
-
-  const toggleOpen = () => {
-    setIsUserServiceOpen((prev) => !prev);
   };
 
   if (loading) {
@@ -90,22 +87,22 @@ const AdminSidebar: React.FC = () => {
               </NavLink>
             </li>
 
-            {/* Layanan User */}
+            {/* Paket Jamaah */}
             <li>
               <button
-                onClick={toggleOpen}
+                onClick={() => setUserPackageOpen((prev) => !prev)}
                 className="flex w-full px-4 py-3 justify-between items-center text-dark hover:bg-gray-200 border-b border-gray-300"
                 aria-haspopup="true"
-                aria-expanded={isUserServiceOpen}
+                aria-expanded={isUserPackageOpen}
               >
-                Harga Layanan User {isUserServiceOpen ? <FaChevronUp /> : <FaChevronDown />}
+                Paket Jamaah {isUserPackageOpen ? <FaChevronUp /> : <FaChevronDown />}
               </button>
-              {isUserServiceOpen && (
+              {isUserPackageOpen && (
                 <ul className="list-none">
                   {ServiceType.map((service) => (
                     <li key={service.id}>
                       <NavLink
-                        to={`/admin/layanan-user/${parseName(service.name)}`}
+                        to={`/admin/paket-jamaah/${parseName(service.name)}`}
                         className={({ isActive }) =>
                           `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
                             isActive ? 'bg-gray-300' : 'text-dark bg-white'
@@ -117,6 +114,71 @@ const AdminSidebar: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+              )}
+            </li>
+
+            {/* Paket Mitra */}
+            <li>
+              <button
+                onClick={() => setMitraPackageOpen((prev) => !prev)}
+                className="flex w-full px-4 py-3 justify-between items-center text-dark hover:bg-gray-200 border-b border-gray-300"
+                aria-haspopup="true"
+                aria-expanded={isMitraPackageOpen}
+              >
+                Paket Mitra {isMitraPackageOpen ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              {isMitraPackageOpen && (
+                <ul className="list-none">
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/periode"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Periode
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/vendor"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Vendor
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/hotel/mekkah"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Hotel Mekkah
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/hotel/madinah"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Hotel Madinah
+                    </NavLink>
+                  </li>
+                </ul>
+                
               )}
             </li>
 

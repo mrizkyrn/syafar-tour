@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { useAuth } from '@/hook/AuthProvider';
-import { FaBars, FaTimes } from 'react-icons/fa';
 import Logo from '@/components/Logo';
 import MainButton from '@/components/MainButton';
 import UserDropdown from '@/components/UserDropdown';
+
+import { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { FaBars, FaTimes } from 'react-icons/fa';
+import { useAuth } from '@/hook/AuthProvider';
 
 interface NavbarItem {
   name: string;
@@ -20,11 +21,21 @@ const navItems: NavbarItem[] = [
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
   const { user, userLogout } = useAuth();
 
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
+
+  const toggleUserDropdown = () => {
+    setIsUserDropdownOpen((prev) => !prev);
+  };
+
+  const handleClickMenu = () => {
+    setIsMenuOpen(false);
+    setIsUserDropdownOpen(false);
+  }
 
   return (
     <nav className="sticky top-0 z-10">
@@ -45,6 +56,7 @@ const Navbar: React.FC = () => {
                       isActive ? 'text-primary font-semibold' : 'text-slate-700 font-normal'
                     }`
                   }
+                  onClick={handleClickMenu}
                 >
                   {item.name}
                 </NavLink>
@@ -59,7 +71,12 @@ const Navbar: React.FC = () => {
                 <span className="text-base text-black">EN</span>
               </div>
               {user ? (
-                <UserDropdown user={user} onLogout={userLogout} />
+                <UserDropdown
+                  user={user}
+                  onLogout={userLogout}
+                  isUserDropdownOpen={isUserDropdownOpen}
+                  toggleUserDropdown={toggleUserDropdown}
+                />
               ) : (
                 <MainButton text="Masuk" to="/login" />
               )}
@@ -79,8 +96,8 @@ const Navbar: React.FC = () => {
       {/* Mobile Menu */}
       <div
         className={`lg:hidden absolute w-full bg-white transition-all duration-300 ease-in-out p-5 sm:px-8 ${
-          isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-        } overflow-hidden`}
+          isMenuOpen ? 'max-h-screen opacity-100 pointer-events-auto' : 'max-h-0 opacity-0 pointer-events-none'
+        }`}
       >
         <ul className="flex flex-col gap-6 mb-7">
           {navItems.map((item, index) => (
@@ -92,17 +109,21 @@ const Navbar: React.FC = () => {
                     isActive ? 'text-primary' : 'text-gray-700'
                   }`
                 }
-                onClick={() => console.log('clicked')}
+                onClick={handleClickMenu}
               >
                 {item.name}
               </NavLink>
             </li>
           ))}
         </ul>
-
         {/* Login Button */}
         {user ? (
-          <UserDropdown user={user} onLogout={userLogout} />
+          <UserDropdown
+            user={user}
+            onLogout={userLogout}
+            isUserDropdownOpen={isUserDropdownOpen}
+            toggleUserDropdown={toggleUserDropdown}
+          />
         ) : (
           <MainButton text="Masuk" to="/login" />
         )}

@@ -1,13 +1,14 @@
 import Pagination from '@/components/Pagination';
 import SortableHeader from '@/components/SortableHeader';
+import TableActions from '@/components/TableActions';
 import EditUserModal from '@/pages/admin/EditUserModal';
+import AddUserModal from '@/pages/admin/AddUserModal';
 
 import { useEffect, useMemo, useState } from 'react';
 import { deleteUser, getAllUsers } from '@/api/user-api';
 import { PaginationResponse } from '@/types/PaginationType';
 import { UserQueryParams, UserResponse, UserRoles } from '@/types/UserType';
-import TableActions from '@/components/TableActions';
-import AddUserModal from './AddUserModal';
+import ErrorTemplate from '@/components/ErrorTemplate';
 
 const columns = [
   { label: 'Nama Lengkap', key: 'full_name' },
@@ -28,7 +29,7 @@ const UserList: React.FC = () => {
     full_name: '',
     role: '' as UserRoles,
     sort: 'created_at',
-    order: 'asc' as 'asc' | 'desc',
+    order: 'desc' as 'asc' | 'desc',
     page: 1,
     limit: 10,
   });
@@ -42,19 +43,17 @@ const UserList: React.FC = () => {
   const fetchUsers = async () => {
     setLoading(true);
     setError(null);
-
-    const response = await getAllUsers(searchParams);
-
-    if (response.success) {
+    try {
+      const response = await getAllUsers(searchParams);
       setUsers(response.data.data);
       setPagination(response.data.pagination);
-
       setSearchParams((prev) => ({ ...prev }));
-    } else {
-      setError(response.message);
+    } catch (error: any) {
+      console.error(error);
+      setError("Terjadi kesalahan saat mengambil data user");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -133,6 +132,8 @@ const UserList: React.FC = () => {
       index: idx + 1 + (searchParams.page - 1) * searchParams.limit,
     }));
   }, [users, searchParams.page, searchParams.limit]);
+
+  if (error) return <ErrorTemplate message={error} />;
 
   return (
     <div className="mx-auto">
@@ -229,7 +230,6 @@ const UserList: React.FC = () => {
 
       {/* Error and Loading */}
       {loading && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
 
       {/* Pagination */}
       <Pagination

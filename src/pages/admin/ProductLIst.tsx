@@ -30,7 +30,7 @@ const ProductList: React.FC = () => {
   const [searchParams, setSearchParams] = useState<ProductQueryParams>({
     name: '',
     sort: 'created_at',
-    order: 'asc' as 'asc' | 'desc',
+    order: 'desc' as 'asc' | 'desc',
     page: 1,
     limit: 10,
   });
@@ -224,7 +224,7 @@ const ProductList: React.FC = () => {
                     onSort={handleSort}
                   />
                 ) : (
-                  <th className="text-left px-6 py-3 border-b">{column.label}</th>
+                  <th className="text-left px-6 py-3 border-b" key={column.key}>{column.label}</th>
                 )
               )}
             </tr>

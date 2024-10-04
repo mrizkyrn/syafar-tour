@@ -6,16 +6,20 @@ import { ToastContainer } from 'react-toastify';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import MainLayout from '@/components/layouts/MainLayout';
 import ProtectedRoute from '@/components/layouts/ProtectedRoute';
+import NotFound from '@/components/NotFound';
 import AuthProvider from '@/hook/AuthProvider';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import CreateProduct from '@/pages/admin/CreateProduct';
+import HotelManagement from '@/pages/admin/HotelManagement';
+import PeriodManagement from '@/pages/admin/PeriodManagement';
 import ProductCategory from '@/pages/admin/ProductCategory';
 import ProductList from '@/pages/admin/ProductLIst';
 import ProductOrder from '@/pages/admin/ProductOrder';
 import UpdateProduct from '@/pages/admin/UpdateProduct';
+import UserList from '@/pages/admin/UserList';
 import UserPackageOption from '@/pages/admin/UserPackageOption';
 import UserPackageOrder from '@/pages/admin/UserPackageOrder';
-import UserList from '@/pages/admin/UserList';
+import VendorManagement from '@/pages/admin/VendorManagement';
 import ChangePassword from '@/pages/user/ChangePassword';
 import DetailProfile from '@/pages/user/DetailProfile';
 import UserProfile from '@/pages/user/UserProfile';
@@ -89,7 +93,7 @@ const router = createBrowserRouter([
           {
             path: 'daftar-mitra',
             element: <RegisterMitra />,
-          }
+          },
         ],
       },
       {
@@ -115,7 +119,7 @@ const router = createBrowserRouter([
         element: <AdminDashboard />,
       },
       {
-        path: '/admin/layanan-user/:type',
+        path: '/admin/paket-jamaah/:type',
         element: <UserPackageOption />,
       },
       {
@@ -145,7 +149,19 @@ const router = createBrowserRouter([
       {
         path: '/admin/user',
         element: <UserList />,
-      }
+      },
+      {
+        path: '/admin/paket-mitra/periode',
+        element: <PeriodManagement />,
+      },
+      {
+        path: '/admin/paket-mitra/vendor',
+        element: <VendorManagement />,
+      },
+      {
+        path: '/admin/paket-mitra/hotel/:city',
+        element: <HotelManagement />,
+      },
     ],
   },
   {
@@ -154,18 +170,15 @@ const router = createBrowserRouter([
   },
   {
     path: '*',
-    element: <div>Not Found</div>,
-  }
+    element: <NotFound />,
+  },
 ]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <RouterProvider router={router} />
-      <ToastContainer 
-        hideProgressBar={true}
-        autoClose={2000}
-      />
+      <ToastContainer hideProgressBar={true} autoClose={2000} />
     </AuthProvider>
   </StrictMode>
 );

@@ -1,3 +1,5 @@
+import ErrorTemplate from './ErrorTemplate';
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -7,7 +9,6 @@ import { SelectInput, SliderInput, TextInput } from '@/components/Input';
 import { SpinnerLoading } from '@/components/Loading';
 import { CreateUserPackageRequest } from '@/types/UserPackageType';
 import { UserPackageOptionResponse } from '@/types/UserPackageOptionType';
-import ErrorTemplate from './ErrorTemplate';
 
 const initialFormData = {
   number_of_pax: 1,
@@ -52,7 +53,8 @@ const UserPackageForm = () => {
 
         return response.data;
       } catch (error: any) {
-        setError(error.message || 'Terjadi kesalahan. Silakan coba lagi.');
+        console.error(error);
+        setError('Terjadi kesalahan. Silakan coba lagi.');
       } finally {
         setLoading(false);
       }
@@ -120,13 +122,13 @@ const UserPackageForm = () => {
       }));
     }
   };
-
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'number' || name === 'number_of_pax' ? Number(value) : value,
+      [name]: name === 'number_of_pax' || name === 'travel_duration' ? Number(value) : value,
     }));
   };
 
@@ -193,35 +195,39 @@ const UserPackageForm = () => {
         <TextInput
           label="Durasi Perjalanan"
           showInfo={true}
+          placeholder="0"
           infoText="Durasi Perjalanan minimal 4 hari. Setiap durasi perjalanan akan dikurangi 2 hari untuk keperluan durasi perjalanan."
           name="travel_duration"
-          value={formData.travel_duration}
+          value={formData.travel_duration || ''}
           onChange={handleChange}
           type="number"
-          min="4"
+          min={4}
           required
+          onWheel={(e: { currentTarget: { blur: () => any; }; }) => e.currentTarget.blur()}
         />
 
         {/* Kota Mekkah (Days) */}
         <TextInput
           label="Durasi Kota Mekkah"
           name="mekkah_duration"
-          value={formData.mekkah_duration}
+          placeholder="0"
+          value={formData.mekkah_duration || ''}
           type="number"
-          min="0"
+          min={0}
           onChange={(e: { target: { value: any } }) => handleDurationChange('mekkah_duration', Number(e.target.value))}
-          required
+          onWheel={(e: { currentTarget: { blur: () => any; }; }) => e.currentTarget.blur()}
         />
 
         {/* Kota Maddinah (Days) */}
         <TextInput
           label="Durasi Kota Maddinah"
           name="madinah_duration"
-          value={formData.madinah_duration}
+          placeholder="0"
+          value={formData.madinah_duration || ''}
           type="number"
-          min="0"
+          min={0}
           onChange={(e: { target: { value: any } }) => handleDurationChange('madinah_duration', Number(e.target.value))}
-          required
+          onWheel={(e: { currentTarget: { blur: () => any; }; }) => e.currentTarget.blur()}
         />
       </div>
 
