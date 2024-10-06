@@ -11,6 +11,7 @@ import AuthProvider from '@/hook/AuthProvider';
 import AdminDashboard from '@/pages/admin/AdminDashboard';
 import CreateProduct from '@/pages/admin/CreateProduct';
 import HotelManagement from '@/pages/admin/HotelManagement';
+import MitraPackageManagement from '@/pages/admin/MitraPackageManagement';
 import PeriodManagement from '@/pages/admin/PeriodManagement';
 import ProductCategory from '@/pages/admin/ProductCategory';
 import ProductList from '@/pages/admin/ProductLIst';
@@ -162,6 +163,10 @@ const router = createBrowserRouter([
         path: '/admin/paket-mitra/hotel/:city',
         element: <HotelManagement />,
       },
+      {
+        path: '/admin/paket-mitra/:type',
+        element: <MitraPackageManagement />,
+      }
     ],
   },
   {

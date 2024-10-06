@@ -148,7 +148,7 @@ const HotelManagement = () => {
 
     const targetIndex = currentRows.findIndex((row) => row.rowId === targetRowId);
     const reorderedRows = currentRows.filter((row) => !rowIds.includes(row.rowId));
-    const insertIndex = dropPosition === 'after' ? targetIndex + 1 : targetIndex;
+    const insertIndex = dropPosition === 'after' ? targetIndex - rowIds.length + 1 : targetIndex;
     const rowsToInsert = currentRows.filter((row) => rowIds.includes(row.rowId));
 
     reorderedRows.splice(insertIndex, 0, ...rowsToInsert);
@@ -311,7 +311,7 @@ const HotelManagement = () => {
 
   return (
     <div className="mx-auto">
-      <h1 className="text-3xl font-semibold mb-8 text-dark capitalize">Hotel</h1>
+      <h1 className="text-3xl font-semibold mb-8 text-dark capitalize">Hotel {city}</h1>
 
       <div className="flex gap-5 items-center mb-5">
         <label className="text-dark" htmlFor="period">

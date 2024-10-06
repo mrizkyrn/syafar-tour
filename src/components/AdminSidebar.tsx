@@ -177,6 +177,126 @@ const AdminSidebar: React.FC = () => {
                       Hotel Madinah
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/pesawat"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Pesawat
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/visa"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Visa
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/transportasi"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Transportasi
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/muthawif"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Muthawif
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/handling-saudi"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Handling Saudi
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/handling-domestik"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Handling Domestik
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/siskopatuh"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Siskopatuh
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/perlengkapan"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Perlengkapan
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/wisata"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Wisata
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/admin/paket-mitra/manasik"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Manasik
+                    </NavLink>
+                  </li>
                 </ul>
                 
               )}
