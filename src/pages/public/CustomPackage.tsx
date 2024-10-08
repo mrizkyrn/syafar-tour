@@ -1,7 +1,11 @@
 import Container from '@/components/Container';
+import MitraPackageForm from '@/components/MitraPackageForm';
 import UserPackageForm from '@/components/UserPackageForm';
+import { useAuth } from '@/hook/AuthProvider';
 
 const CustomPackage: React.FC = () => {
+  const { user } = useAuth();
+
   return (
     <>
       <section className="py-16 bg-image-linear-gradient bg-cover bg-center">
@@ -34,7 +38,7 @@ const CustomPackage: React.FC = () => {
             <h1 className="text-base md:text-2xl font-medium text-dark text-center">Paket custom umrah</h1>
           </div>
 
-          <UserPackageForm />
+          {user && (user.role === 'MITRA' || user.role === 'ADMIN') ? <MitraPackageForm /> : <UserPackageForm />}
         </Container>
       </section>
     </>

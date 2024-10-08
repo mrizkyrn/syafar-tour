@@ -24,8 +24,7 @@ import { PeriodResponse } from '@/types/PeriodType';
 import { getAllPeriods } from '@/api/period-api';
 import { VendorResponse } from '@/types/VendorType';
 import { getAllVendors } from '@/api/vendor-api';
-
-const SAR_TO_IDR = 4000;
+import { getAllExchangeRates } from '@/api/exchange-rate-api';
 
 const HotelManagement = () => {
   const { city = '' } = useParams<{ city: string }>();
@@ -35,6 +34,7 @@ const HotelManagement = () => {
   const [periods, setPeriods] = useState<PeriodResponse[]>([]);
   const [vendors, setVendors] = useState<VendorResponse[]>([]);
   const [queryParams, setQueryParams] = useState<HotelQueryParams>({});
+  const [sarToIdr, setSarToIdr] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -44,10 +44,17 @@ const HotelManagement = () => {
       setError('');
 
       try {
-        const [vendorResponse, periodResponse] = await Promise.all([getAllVendors(), getAllPeriods()]);
+        const [vendorResponse, periodResponse, exchnageRates] = await Promise.all([
+          getAllVendors(),
+          getAllPeriods(),
+          getAllExchangeRates(),
+        ]);
 
         setVendors(vendorResponse.data);
         setPeriods(periodResponse.data);
+        setSarToIdr(
+          exchnageRates.data.find((rate: { currency: string }) => rate.currency === 'SAR')?.rate_idr ?? 0
+        );
 
         if (vendorResponse.data.length > 0) {
           setQueryParams((prev) => ({ ...prev, vendor_id: vendorResponse.data[0].id }));
@@ -115,9 +122,9 @@ const HotelManagement = () => {
             { type: 'number', value: hotel.periods[0].price_triple },
             { type: 'number', value: hotel.periods[0].price_quad },
             { type: 'text', text: hotel.name },
-            { type: 'text', text: formatPrice(hotel.periods[0].price_double * SAR_TO_IDR), nonEditable: true },
-            { type: 'text', text: formatPrice(hotel.periods[0].price_triple * SAR_TO_IDR), nonEditable: true },
-            { type: 'text', text: formatPrice(hotel.periods[0].price_quad * SAR_TO_IDR), nonEditable: true },
+            { type: 'text', text: formatPrice(hotel.periods[0].price_double * sarToIdr), nonEditable: true },
+            { type: 'text', text: formatPrice(hotel.periods[0].price_triple * sarToIdr), nonEditable: true },
+            { type: 'text', text: formatPrice(hotel.periods[0].price_quad * sarToIdr), nonEditable: true },
           ],
           reorderable: true,
           height: 35,
@@ -126,7 +133,7 @@ const HotelManagement = () => {
     ];
 
     setRowsData(updatedRows);
-  }, [hotels]);
+  }, [hotels, sarToIdr]);
 
   const columns: Column[] = useMemo(
     () => [

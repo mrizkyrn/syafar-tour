@@ -38,6 +38,7 @@ import Register from '@/pages/public/Register';
 
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
+import OtherManagement from './pages/admin/OtherManagement';
 
 const router = createBrowserRouter([
   {
@@ -166,6 +167,10 @@ const router = createBrowserRouter([
       {
         path: '/admin/paket-mitra/:type',
         element: <MitraPackageManagement />,
+      },
+      {
+        path: '/admin/lainnya',
+        element: <OtherManagement />,
       }
     ],
   },

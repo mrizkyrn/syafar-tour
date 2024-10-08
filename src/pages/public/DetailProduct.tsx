@@ -1,21 +1,22 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hook/AuthProvider';
-import { getProduct } from '@/api/product-api';
-import { createProductOrder } from '@/api/product-order-api';
-import { ProductResponse } from '@/types/ProductType';
-import { FaCheck, FaTimes, FaAngleDown, FaAngleUp, FaUsers } from 'react-icons/fa';
 import Container from '@/components/Container';
 import formatPrice from '@/utils/formatPrice';
 import parse from 'html-react-parser';
+
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FaCheck, FaTimes, FaAngleDown, FaAngleUp, FaUsers } from 'react-icons/fa';
+import { getContactByName } from '@/api/contact-api';
+import { getProduct } from '@/api/product-api';
+import { createProductOrder } from '@/api/product-order-api';
 import { SpinnerLoading } from '@/components/Loading';
+import { useAuth } from '@/hook/AuthProvider';
 import { CreateProductOrderRequest } from '@/types/ProductOrderType';
+import { ProductResponse } from '@/types/ProductType';
 
 const DetailProduct: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const whatsappTo = '6287881311283';
 
   const [product, setProduct] = useState<ProductResponse>();
   const [participantCount, setParticipantCount] = useState(1);
@@ -24,6 +25,7 @@ const DetailProduct: React.FC = () => {
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [selectedVariation, setSelectedVariation] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -31,6 +33,22 @@ const DetailProduct: React.FC = () => {
     (min, variation) => (Number(variation.price) < min ? Number(variation.price) : min),
     Infinity
   );
+
+  useEffect(() => {
+    const fetchContact = async () => {
+      try {
+        setLoading(true);
+        const response = await getContactByName('whatsapp');
+        setWhatsappNumber(response.data.value);
+      } catch (error) {
+        console.error('Error fetching contact:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContact();
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -127,7 +145,7 @@ const DetailProduct: React.FC = () => {
       .map((line) => line.trim())
       .join('\n');
 
-    const whatsappUrl = `https://wa.me/${whatsappTo}?text=${encodeURIComponent(trimmedMessage)}`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(trimmedMessage)}`;
     setShowModal(false);
     window.open(whatsappUrl, '_blank');
   };

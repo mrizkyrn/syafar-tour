@@ -39,9 +39,7 @@ import {
   getAllVisas,
 } from '@/api/mitra-package-option-api';
 import { BulkUpdateMitraPackageOptionRequest, MitraPackageOptionResponse } from '@/types/MitraPackageOptionType';
-
-const SAR_TO_IDR = 4000;
-const USD_TO_IDR = 14000;
+import { getAllExchangeRates } from '@/api/exchange-rate-api';
 
 const formatUSD = (price: number) => {
   return new Intl.NumberFormat('en-US', {
@@ -82,8 +80,28 @@ const MitraPackageManagement = () => {
 
   const [datas, setDatas] = useState<MitraPackageOptionResponse[]>([]);
   const [rowsData, setRowsData] = useState<Row[]>([]);
+  const [sarToIdr, setSarToIdr] = useState(0);
+  const [usdToIdr, setUsdToIdr] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await getAllExchangeRates();
+        setSarToIdr(response.data.find((rate: { currency: string }) => rate.currency === 'SAR')?.rate_idr || 0);
+        setUsdToIdr(response.data.find((rate: { currency: string }) => rate.currency === 'USD')?.rate_idr || 0);
+      } catch (error: any) {
+        console.error(error);
+        setError('Terjadi kesalahan saat mengambil data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -136,9 +154,9 @@ const MitraPackageManagement = () => {
         cells: [
           { type: 'number', value: index + 1, nonEditable: true },
           { type: 'text', text: data.name },
-          { type: 'text', text: (data.price_idr / SAR_TO_IDR).toString() },
+          { type: 'text', text: (data.price_idr / sarToIdr).toString() },
           { type: 'text', text: formatPrice(data.price_idr) },
-          { type: 'text', text: formatUSD(data.price_idr / USD_TO_IDR) },
+          { type: 'text', text: formatUSD(data.price_idr / usdToIdr) },
         ],
         reorderable: true,
         height: 30,
@@ -146,7 +164,7 @@ const MitraPackageManagement = () => {
     ];
     console.log(updatedRows);
     setRowsData(updatedRows);
-  }, [datas]);
+  }, [datas, sarToIdr, usdToIdr]);
 
   const columns: Column[] = useMemo(
     () => [
@@ -191,7 +209,7 @@ const MitraPackageManagement = () => {
   ) => {
     rows[rowIndex].cells[sarIndex] = { type: 'text', text: sarValue };
     rows[rowIndex].cells[idrIndex] = { type: 'text', text: formatPrice(price_idr) };
-    rows[rowIndex].cells[usdIndex] = { type: 'text', text: formatUSD(price_idr / USD_TO_IDR) };
+    rows[rowIndex].cells[usdIndex] = { type: 'text', text: formatUSD(price_idr / usdToIdr) };
   };
 
   const handleCellChange = (changes: CellChange[]) => {
@@ -205,7 +223,7 @@ const MitraPackageManagement = () => {
 
       if (change.type === 'text') {
         if (change.columnId === 'price_sar') {
-          const price_idr = Number(change.newCell.text) * SAR_TO_IDR;
+          const price_idr = Number(change.newCell.text) * sarToIdr;
           updatePriceCells(updatedRows, rowIndex, sarIndex, idrIndex, usdIndex, change.newCell.text, price_idr);
         } else if (change.columnId === 'price_idr') {
           const price_idr = Number(change.newCell.text.replace(/\D/g, ''));
@@ -215,18 +233,18 @@ const MitraPackageManagement = () => {
             sarIndex,
             idrIndex,
             usdIndex,
-            (price_idr / SAR_TO_IDR).toFixed(2),
+            (price_idr / sarToIdr).toFixed(2),
             price_idr
           );
         } else if (change.columnId === 'price_usd') {
-          const price_idr = Number(change.newCell.text.replace(/\D/g, '')) * USD_TO_IDR;
+          const price_idr = Number(change.newCell.text.replace(/\D/g, '')) * usdToIdr;
           updatePriceCells(
             updatedRows,
             rowIndex,
             sarIndex,
             idrIndex,
             usdIndex,
-            (price_idr / SAR_TO_IDR).toFixed(2),
+            (price_idr / sarToIdr).toFixed(2),
             price_idr
           );
         } else {

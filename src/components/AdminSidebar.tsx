@@ -298,7 +298,6 @@ const AdminSidebar: React.FC = () => {
                     </NavLink>
                   </li>
                 </ul>
-                
               )}
             </li>
 
@@ -395,17 +394,6 @@ const AdminSidebar: React.FC = () => {
             </li>
 
             {/* User */}
-            {/* <li> */}
-            {/* <button
-                onClick={() => setIsUserOpen((prev) => !prev)}
-                className="flex w-full px-4 py-3 justify-between items-center text-dark hover:bg-gray-200 border-b border-gray-300"
-                aria-haspopup="true"
-                aria-expanded={isUserOpen}
-              >
-                User {isUserOpen ? <FaChevronUp /> : <FaChevronDown />}
-              </button>
-              {isUserOpen && (
-                <ul className="list-none"> */}
             <li>
               <NavLink
                 to="/admin/user"
@@ -418,9 +406,20 @@ const AdminSidebar: React.FC = () => {
                 User
               </NavLink>
             </li>
-            {/* </ul> */}
-            {/* )} */}
-            {/* </li> */}
+
+            {/* Other */}
+            <li>
+              <NavLink
+                to="/admin/lainnya"
+                className={({ isActive }) =>
+                  `w-full block px-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                    isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                  }`
+                }
+              >
+                lainnya
+              </NavLink>
+            </li>
           </ul>
         </nav>
       )}

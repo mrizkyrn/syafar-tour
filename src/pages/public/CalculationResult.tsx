@@ -12,14 +12,15 @@ import { SpinnerLoading } from '@/components/Loading';
 import { useAuth } from '@/hook/AuthProvider';
 import { CreateUserPackageOrderRequest } from '@/types/UserPackageOrderType';
 import { UserPackageResponse } from '@/types/UserPackageType';
+import { getContactByName } from '@/api/contact-api';
 
 const CalculationResult: React.FC = () => {
   const { id = '' } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const whatsappTo = '6287881311283';
 
   const [data, setData] = useState<UserPackageResponse>({} as UserPackageResponse);
   const [isOrder, setIsOrder] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState<CreateUserPackageOrderRequest>({
@@ -28,6 +29,19 @@ const CalculationResult: React.FC = () => {
     email: '',
     whatsapp_number: '',
   });
+
+  useEffect(() => {
+    const fetchContact = async () => {
+      try {
+        const contact = await getContactByName('whatsapp');
+        setWhatsappNumber(contact.data.value);
+      } catch (error: any) {
+        console.error('Error fetching contact:', error);
+      }
+    };
+
+    fetchContact();
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -123,7 +137,7 @@ const CalculationResult: React.FC = () => {
       .map((line) => line.trim())
       .join('\n');
 
-    const whatsappUrl = `https://wa.me/${whatsappTo}?text=${encodeURIComponent(trimmedMessage)}`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(trimmedMessage)}`;
     window.open(whatsappUrl, '_blank');
   };
 
