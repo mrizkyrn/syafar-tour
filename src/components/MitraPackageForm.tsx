@@ -1,9 +1,11 @@
 import Select from 'react-select';
+import formatDate from '@/utils/formatDate';
 
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { getAllPeriods } from '@/api/period-api';
 import { PeriodResponse } from '@/types/PeriodType';
-import formatDate from '@/utils/formatDate';
 import { getAllVendors } from '@/api/vendor-api';
 import { VendorResponse } from '@/types/VendorType';
 import {
@@ -24,6 +26,8 @@ import { HotelResponse } from '@/types/HotelType';
 import { getAllHotels } from '@/api/hotel-api';
 import { SliderInput, TextInput } from './Input';
 import { getAllExchangeRates } from '@/api/exchange-rate-api';
+import { CreateMitraPackageRequest } from '@/types/MitraPackageType';
+import { createMitraPackage } from '@/api/mitra-package-api';
 
 const formatDateToInput = (date: string | Date) => {
   const d = new Date(date);
@@ -33,28 +37,33 @@ const formatDateToInput = (date: string | Date) => {
 
   return `${year}-${month}-${day}`;
 };
-
 const MitraPackageForm = () => {
-  const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState<CreateMitraPackageRequest>({
     number_of_pax: 1,
-    period: '',
-    departure_date: '',
-    airline: '',
+    period_id: '',
+    departure_date: new Date(),
     travel_duration: 0,
     mekkah_duration: 0,
     madinah_duration: 0,
-    vendor: '',
-    hotel_mekkah: '',
-    hotel_madinah: '',
-    visa: '',
-    transportation: '',
-    muthawif: '',
-    handling_saudi: '',
-    handling_domestic: '',
-    siskopatuh: '',
-    equipment: '',
-    tour: '',
-    manasik: '',
+    airline_id: '',
+    vendor_id: '',
+    hotel_mekkah_id: '',
+    hotel_madinah_id: '',
+    mekkah_room_type: '',
+    madinah_room_type: '',
+    visa_id: '',
+    transportation_id: '',
+    muthawif_id: '',
+    handling_saudi_id: '',
+    handling_domestic_id: '',
+    siskopatuh_id: '',
+    equipment_id: '',
+    tour_plus_id: '',
+    manasik_id: '',
+    tour_leader: 0,
+    margin: 0,
   });
   const [periodOptions, setPeriodOptions] = useState<PeriodResponse[]>([]);
   const [airlineOptions, setAirlineOptions] = useState<MitraPackageOptionResponse[]>([]);
@@ -123,6 +132,22 @@ const MitraPackageForm = () => {
         setTourOptions(tours.data);
         setManasikOptions(manasiks.data);
         setSarToIdr(exchanges.data.find((exchange: any) => exchange.currency === 'SAR')?.rate_idr || 0);
+
+        setFormData((prev) => ({
+          ...prev,
+          period_id: periods.data[0].id,
+          airline_id: airlines.data[0].id,
+          vendor_id: vendors.data[0].id,
+          visa_id: visas.data[0].id,
+          transportation_id: transportations.data[0].id,
+          muthawif_id: muthawifs.data[0].id,
+          handling_saudi_id: handlingSaudis.data[0].id,
+          handling_domestic_id: handlingDomestics.data[0].id,
+          siskopatuh_id: siskopatuhs.data[0].id,
+          equipment_id: equipments.data[0].id,
+          tour_plus_id: tours.data[0].id,
+          manasik_id: manasiks.data[0].id,
+        }));
       } catch (error: any) {
         console.error(error);
       } finally {
@@ -134,21 +159,20 @@ const MitraPackageForm = () => {
   }, []);
 
   useEffect(() => {
-    if (!formData.vendor || !formData.period) return;
+    if (!formData.vendor_id || !formData.period_id) return;
 
     const fetchHotels = async () => {
       try {
         const hotelMekkah = await getAllHotels({
           city: 'MEKKAH',
-          vendor_id: formData.vendor,
-          period_id: formData.period,
+          vendor_id: formData.vendor_id,
+          period_id: formData.period_id,
         });
         const hotelMadinah = await getAllHotels({
           city: 'MADINAH',
-          vendor_id: formData.vendor,
-          period_id: formData.period,
+          vendor_id: formData.vendor_id,
+          period_id: formData.period_id,
         });
-        console.log(hotelMekkah.data);
         setHotelMekkahOptions(hotelMekkah.data);
         setHotelMadinahOptions(hotelMadinah.data);
       } catch (error) {
@@ -157,22 +181,38 @@ const MitraPackageForm = () => {
     };
 
     fetchHotels();
-  }, [formData.period, formData.vendor]);
+  }, [formData.period_id, formData.vendor_id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    if (name === 'duration_mekkah' || name === 'duration_madinah') {
-      if (isNaN(Number(value))) return;
+    if (name === 'margin') {
+      const cleanValue = value.replace(/\D/g, '');
+      setFormData((prev) => ({
+        ...prev,
+        margin: Number(cleanValue),
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]:
+          name === 'number_of_pax' || name === 'travel_duration' || name === 'tour_leader' ? Number(value) : value,
+      }));
     }
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'number_of_pax' || name === 'travel_duration' ? Number(value) : value,
-    }));
   };
 
   const handleSelectChange = (selectedOption: any, field: string) => {
+    if (field === 'hotel_mekkah_id' || field === 'hotel_madinah_id') {
+      const roomType = selectedOption?.label?.split(' - ')[0].split(' (')[1].replace(')', '');
+
+      setFormData((prev) => ({
+        ...prev,
+        [field]: selectedOption?.value || '',
+        [field === 'hotel_mekkah_id' ? 'mekkah_room_type' : 'madinah_room_type']: roomType,
+      }));
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [field]: selectedOption?.value || '',
@@ -191,8 +231,8 @@ const MitraPackageForm = () => {
 
       setFormData((prev) => ({
         ...prev,
-        period: selectedOption?.value || '',
-        departure_date: '',
+        period_id: selectedOption?.value || '',
+        departure_date: new Date(),
       }));
     }
   };
@@ -224,7 +264,28 @@ const MitraPackageForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
+    toast.promise(createMitraPackage(formData), {
+      pending: 'Menghitung estimasi harga...',
+      success: {
+        render({ data }) {
+          setLoading(false);
+          navigate(`custom-mitra/${data.data}`);
+          return 'Paket berhasil dihitung!';
+        },
+      },
+      error: {
+        render({ data }) {
+          setLoading(false);
+          return (data as { message: string }).message;
+        },
+      },
+    });
+
+    try {
+      await createMitraPackage(formData);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const selectStyles = {
@@ -261,7 +322,7 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Periode</label>
         <Select
-          name="period"
+          name="period_id"
           options={periodOptions.map((period) => ({
             value: period.id,
             label: `${formatDate(period.start_date)} - ${formatDate(period.end_date)}`,
@@ -281,11 +342,11 @@ const MitraPackageForm = () => {
           className="w-full px-3 py-3 md:px-5 text-xs md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300"
           type="date"
           name="departure_date"
-          value={formData.departure_date}
+          value={formatDateToInput(formData.departure_date)}
           onChange={handleChange}
           min={minDate}
           max={maxDate}
-          disabled={!formData.period}
+          disabled={!formData.period_id}
           required
         />
       </div>
@@ -336,12 +397,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Maskapai</label>
         <Select
-          name="airline"
+          name="airline_id"
+          defaultValue={{
+            value: airlineOptions[0]?.id,
+            label: `${airlineOptions[0]?.name} - ${formatPrice(airlineOptions[0]?.price_idr)}`,
+          }}
           options={airlineOptions.map((airline) => ({
             value: airline.id,
             label: `${airline.name} - ${formatPrice(airline.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'airline')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'airline_id')}
           placeholder="Pilih maskapai"
           isSearchable
           required
@@ -353,12 +418,12 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Vendor</label>
         <Select
-          name="vendor"
+          name="vendor_id"
           options={vendorOptions.map((vendor) => ({
             value: vendor.id,
             label: vendor.name,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'vendor')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'vendor_id')}
           placeholder="Pilih vendor"
           isSearchable
           required
@@ -370,28 +435,28 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Hotel di Mekkah</label>
         <Select
-          name="hotel_mekkah"
+          name="hotel_mekkah_id"
           options={hotelMekkahOptions.flatMap((hotel) =>
             hotel.periods.flatMap((period) => [
               {
-                value: `${hotel.id}-double`,
+                value: `${hotel.id}`,
                 label: `${hotel.name} (Double) - ${formatPrice(period.price_double * sarToIdr)}`,
               },
               {
-                value: `${hotel.id}-triple`,
+                value: `${hotel.id}`,
                 label: `${hotel.name} (Triple) - ${formatPrice(period.price_triple * sarToIdr)}`,
               },
               {
-                value: `${hotel.id}-quad`,
+                value: `${hotel.id}`,
                 label: `${hotel.name} (Quad) - ${formatPrice(period.price_quad * sarToIdr)}`,
               },
             ])
           )}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'hotel_mekkah')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'hotel_mekkah_id')}
           placeholder="Pilih hotel di Mekkah"
           isSearchable
           required
-          isDisabled={!formData.vendor || !formData.period}
+          isDisabled={!formData.vendor_id || !formData.period_id}
           styles={selectStyles}
         />
       </div>
@@ -400,28 +465,28 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Hotel di Madinah</label>
         <Select
-          name="hotel_madinah"
+          name="hotel_madinah_id"
           options={hotelMadinahOptions.flatMap((hotel) =>
             hotel.periods.flatMap((period) => [
               {
-                value: `${hotel.id}-double`,
+                value: `${hotel.id}`,
                 label: `${hotel.name} (Double) - ${formatPrice(period.price_double * sarToIdr)}`,
               },
               {
-                value: `${hotel.id}-triple`,
+                value: `${hotel.id}`,
                 label: `${hotel.name} (Triple) - ${formatPrice(period.price_triple * sarToIdr)}`,
               },
               {
-                value: `${hotel.id}-quad`,
+                value: `${hotel.id}`,
                 label: `${hotel.name} (Quad) - ${formatPrice(period.price_quad * sarToIdr)}`,
               },
             ])
           )}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'hotel_madinah')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'hotel_madinah_id')}
           placeholder="Pilih hotel di Madinah"
           isSearchable
           required
-          isDisabled={!formData.vendor || !formData.period}
+          isDisabled={!formData.vendor_id || !formData.period_id}
           styles={selectStyles}
         />
       </div>
@@ -430,12 +495,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Visa</label>
         <Select
-          name="visa"
+          name="visa_id"
+          defaultValue={{
+            value: visaOptions[0]?.id,
+            label: `${visaOptions[0]?.name} - ${formatPrice(visaOptions[0]?.price_idr)}`,
+          }}
           options={visaOptions.map((visa) => ({
             value: visa.id,
             label: `${visa.name} - ${formatPrice(visa.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'visa')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'visa_id')}
           placeholder="Pilih visa"
           isSearchable
           required
@@ -447,12 +516,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Transportasi</label>
         <Select
-          name="transportation"
+          name="transportation_id"
+          defaultValue={{
+            value: transportationOptions[0]?.id,
+            label: `${transportationOptions[0]?.name} - ${formatPrice(transportationOptions[0]?.price_idr)}`,
+          }}
           options={transportationOptions.map((transportation) => ({
             value: transportation.id,
             label: `${transportation.name} - ${formatPrice(transportation.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'transportation')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'transportation_id')}
           placeholder="Pilih transportasi"
           isSearchable
           required
@@ -464,12 +537,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Muthawif</label>
         <Select
-          name="muthawif"
+          name="muthawif_id"
+          defaultValue={{
+            value: muthawifOptions[0]?.id,
+            label: `${muthawifOptions[0]?.name} - ${formatPrice(muthawifOptions[0]?.price_idr)}`,
+          }}
           options={muthawifOptions.map((muthawif) => ({
             value: muthawif.id,
             label: `${muthawif.name} - ${formatPrice(muthawif.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'muthawif')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'muthawif_id')}
           placeholder="Pilih muthawif"
           isSearchable
           required
@@ -481,12 +558,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Handling Saudi</label>
         <Select
-          name="handling_saudi"
+          name="handling_saudi_id"
+          defaultValue={{
+            value: handlingSaudiOptions[0]?.id,
+            label: `${handlingSaudiOptions[0]?.name} - ${formatPrice(handlingSaudiOptions[0]?.price_idr)}`,
+          }}
           options={handlingSaudiOptions.map((handlingSaudi) => ({
             value: handlingSaudi.id,
             label: `${handlingSaudi.name} - ${formatPrice(handlingSaudi.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'handling_saudi')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'handling_saudi_id')}
           placeholder="Pilih handling Saudi"
           isSearchable
           required
@@ -498,12 +579,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Handling Domestik</label>
         <Select
-          name="handling_domestic"
+          name="handling_domestic_id"
+          defaultValue={{
+            value: handlingDomesticOptions[0]?.id,
+            label: `${handlingDomesticOptions[0]?.name} - ${formatPrice(handlingDomesticOptions[0]?.price_idr)}`,
+          }}
           options={handlingDomesticOptions.map((handlingDomestic) => ({
             value: handlingDomestic.id,
             label: `${handlingDomestic.name} - ${formatPrice(handlingDomestic.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'handling_domestic')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'handling_domestic_id')}
           placeholder="Pilih handling domestik"
           isSearchable
           required
@@ -515,12 +600,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Siskopatuh</label>
         <Select
-          name="siskopatuh"
+          name="siskopatuh_id"
+          defaultValue={{
+            value: siskopatuhOptions[0]?.id,
+            label: `${siskopatuhOptions[0]?.name} - ${formatPrice(siskopatuhOptions[0]?.price_idr)}`,
+          }}
           options={siskopatuhOptions.map((siskopatuh) => ({
             value: siskopatuh.id,
             label: `${siskopatuh.name} - ${formatPrice(siskopatuh.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'siskopatuh')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'siskopatuh_id')}
           placeholder="Pilih siskopatuh"
           isSearchable
           required
@@ -532,12 +621,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Perlengkapan</label>
         <Select
-          name="equipment"
+          name="equipment_id"
+          defaultValue={{
+            value: equipmentOptions[0]?.id,
+            label: `${equipmentOptions[0]?.name} - ${formatPrice(equipmentOptions[0]?.price_idr)}`,
+          }}
           options={equipmentOptions.map((equipment) => ({
             value: equipment.id,
             label: `${equipment.name} - ${formatPrice(equipment.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'equipment')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'equipment_id')}
           placeholder="Pilih perlengkapan"
           isSearchable
           required
@@ -549,12 +642,16 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Tour</label>
         <Select
-          name="tour"
+          name="tour_plus_id"
+          defaultValue={{
+            value: tourOptions[0]?.id,
+            label: `${tourOptions[0]?.name} - ${formatPrice(tourOptions[0]?.price_idr)}`,
+          }}
           options={tourOptions.map((tour) => ({
             value: tour.id,
             label: `${tour.name} - ${formatPrice(tour.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'tour')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'tour_plus_id')}
           placeholder="Pilih tour"
           isSearchable
           required
@@ -566,18 +663,46 @@ const MitraPackageForm = () => {
       <div className="flex flex-col gap-3">
         <label className="text-sm md:text-lg font-medium text-dark">Manasik</label>
         <Select
-          name="manasik"
+          name="manasik_id"
+          defaultValue={{
+            value: manasikOptions[0]?.id,
+            label: `${manasikOptions[0]?.name} - ${formatPrice(manasikOptions[0]?.price_idr)}`,
+          }}
           options={manasikOptions.map((manasik) => ({
             value: manasik.id,
             label: `${manasik.name} - ${formatPrice(manasik.price_idr)}`,
           }))}
-          onChange={(selectedOption) => handleSelectChange(selectedOption, 'manasik')}
+          onChange={(selectedOption) => handleSelectChange(selectedOption, 'manasik_id')}
           placeholder="Pilih manasik"
           isSearchable
           required
           styles={selectStyles}
         />
       </div>
+
+      {/* Tour Leader */}
+      <TextInput
+        label="Jumlah Tour Leader"
+        placeholder="0"
+        name="tour_leader"
+        value={formData.tour_leader}
+        onChange={handleChange}
+        type="text"
+        min={0}
+        required
+      />
+
+      {/* Margin */}
+      <TextInput
+        label="Margin"
+        placeholder="0"
+        name="margin"
+        value={formatPrice(formData.margin)}
+        onChange={handleChange}
+        type="text"
+        min={0}
+        required
+      />
 
       {/* Submit Button */}
       <button

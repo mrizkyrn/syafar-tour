@@ -154,7 +154,7 @@ const MitraPackageManagement = () => {
         cells: [
           { type: 'number', value: index + 1, nonEditable: true },
           { type: 'text', text: data.name },
-          { type: 'text', text: (data.price_idr / sarToIdr).toString() },
+          { type: 'text', text: (data.price_idr / sarToIdr).toFixed(2) },
           { type: 'text', text: formatPrice(data.price_idr) },
           { type: 'text', text: formatUSD(data.price_idr / usdToIdr) },
         ],

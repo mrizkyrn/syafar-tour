@@ -39,6 +39,7 @@ import Register from '@/pages/public/Register';
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
 import OtherManagement from './pages/admin/OtherManagement';
+import CustomPackageMitra from './pages/user/CustomPackageMitra';
 
 const router = createBrowserRouter([
   {
@@ -96,13 +97,17 @@ const router = createBrowserRouter([
             path: 'daftar-mitra',
             element: <RegisterMitra />,
           },
+          {
+            path: 'transaksi',
+            element: <UserTransaction />,
+          },
         ],
       },
       {
-        path: '/user/transaksi',
+        path: '/paket/custom-mitra/:id',
         element: (
-          <ProtectedRoute requiredRoles={['ADMIN', 'MITRA', 'USER']}>
-            <UserTransaction />
+          <ProtectedRoute requiredRoles={['ADMIN', 'MITRA']}>
+            <CustomPackageMitra />
           </ProtectedRoute>
         ),
       },
@@ -171,7 +176,7 @@ const router = createBrowserRouter([
       {
         path: '/admin/lainnya',
         element: <OtherManagement />,
-      }
+      },
     ],
   },
   {
