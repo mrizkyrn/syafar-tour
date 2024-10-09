@@ -40,6 +40,7 @@ import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
 import OtherManagement from './pages/admin/OtherManagement';
 import CustomPackageMitra from './pages/user/CustomPackageMitra';
+import MitraPackageOrder from './pages/admin/MitraPackageOrder';
 
 const router = createBrowserRouter([
   {
@@ -152,6 +153,10 @@ const router = createBrowserRouter([
       {
         path: '/admin/order/paket-jamaah',
         element: <UserPackageOrder />,
+      },
+      {
+        path: '/admin/order/paket-mitra',
+        element: <MitraPackageOrder />,
       },
       {
         path: '/admin/user',

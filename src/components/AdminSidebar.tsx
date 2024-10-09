@@ -389,6 +389,18 @@ const AdminSidebar: React.FC = () => {
                       Paket Jamaah
                     </NavLink>
                   </li>
+                  <li>
+                    <NavLink
+                      to="/admin/order/paket-mitra"
+                      className={({ isActive }) =>
+                        `w-full block pl-8 pr-4 py-3 hover:bg-gray-200 border-b border-gray-300 ${
+                          isActive ? 'bg-gray-300' : 'text-dark bg-white'
+                        }`
+                      }
+                    >
+                      Paket Mitra
+                    </NavLink>
+                  </li>
                 </ul>
               )}
             </li>
