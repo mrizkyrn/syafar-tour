@@ -156,7 +156,7 @@ const UserPackageOrder: React.FC = () => {
             onChange={handleLimitChange}
             className="border px-4 py-1 rounded-md border-gray-400"
           >
-            <option value={2}>10</option>
+            <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>
           </select>

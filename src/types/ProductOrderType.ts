@@ -23,6 +23,15 @@ export type CreateProductOrderRequest = {
   total_price: number;
 };
 
+export type ProductOrderQueryParams = {
+  search?: string;
+  sort?: string;
+  order?: 'asc' | 'desc';
+  page: number;
+  limit: number;
+};
+
+
 type ProductVariation = {
   id: string;
   name: string;

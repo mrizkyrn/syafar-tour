@@ -158,7 +158,7 @@ const CustomPackageMitra: React.FC = () => {
   if (error) return <ErrorTemplate message={error} />;
 
   return (
-    <div className="bg-gray-50 min-h-screen flex justify-center items-center">
+    <div className="bg-gray-50 min-h-screen flex justify-center items-center py-5 md:py-10">
       <Container>
         <div className="bg-white shadow-lg rounded-lg p-8 w-full">
           <div className="text-center">

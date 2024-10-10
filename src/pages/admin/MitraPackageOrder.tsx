@@ -2,6 +2,7 @@ import ErrorTemplate from '@/components/ErrorTemplate';
 import Pagination from '@/components/Pagination';
 import SortableHeader from '@/components/SortableHeader';
 import TableActions from '@/components/TableActions';
+import formatDate from '@/utils/formatDate';
 import formatPrice from '@/utils/formatPrice';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -12,7 +13,6 @@ import { PaginationResponse } from '@/types/PaginationType';
 import { MitraPackageOrderResponse, MitraPackageOrderQueryParams } from '@/types/MitraPackageOrderType';
 import { MitraPackageResponse } from '@/types/MitraPackageType';
 import { getMitraPackage } from '@/api/mitra-package-api';
-import formatDate from '@/utils/formatDate';
 import { getAllExchangeRates } from '@/api/exchange-rate-api';
 
 const columns = [
@@ -159,7 +159,7 @@ const MitraPackageOrder: React.FC = () => {
 
   return (
     <div className="mx-auto">
-      <h1 className="text-3xl font-semibold mb-8 text-dark">Order Paket Jamaah</h1>
+      <h1 className="text-3xl font-semibold mb-8 text-dark">Order Paket Mitra</h1>
 
       {/* Search & Filter */}
       <div className="flex justify-between items-center mb-4">
@@ -181,7 +181,7 @@ const MitraPackageOrder: React.FC = () => {
             onChange={handleLimitChange}
             className="border px-4 py-1 rounded-md border-gray-400"
           >
-            <option value={2}>10</option>
+            <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>
           </select>

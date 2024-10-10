@@ -135,9 +135,7 @@ const MitraPackageForm = () => {
 
         setFormData((prev) => ({
           ...prev,
-          period_id: periods.data[0].id,
           airline_id: airlines.data[0].id,
-          vendor_id: vendors.data[0].id,
           visa_id: visas.data[0].id,
           transportation_id: transportations.data[0].id,
           muthawif_id: muthawifs.data[0].id,

@@ -12,6 +12,8 @@ import AdminDashboard from '@/pages/admin/AdminDashboard';
 import CreateProduct from '@/pages/admin/CreateProduct';
 import HotelManagement from '@/pages/admin/HotelManagement';
 import MitraPackageManagement from '@/pages/admin/MitraPackageManagement';
+import MitraPackageOrder from '@/pages/admin/MitraPackageOrder';
+import OtherManagement from '@/pages/admin/OtherManagement';
 import PeriodManagement from '@/pages/admin/PeriodManagement';
 import ProductCategory from '@/pages/admin/ProductCategory';
 import ProductList from '@/pages/admin/ProductLIst';
@@ -21,11 +23,6 @@ import UserList from '@/pages/admin/UserList';
 import UserPackageOption from '@/pages/admin/UserPackageOption';
 import UserPackageOrder from '@/pages/admin/UserPackageOrder';
 import VendorManagement from '@/pages/admin/VendorManagement';
-import ChangePassword from '@/pages/user/ChangePassword';
-import DetailProfile from '@/pages/user/DetailProfile';
-import UserProfile from '@/pages/user/UserProfile';
-import UserTransaction from '@/pages/user/UserTransaction';
-import RegisterMitra from '@/pages/user/RegisterMitra';
 import CalculationResult from '@/pages/public/CalculationResult';
 import DetailProduct from '@/pages/public/DetailProduct';
 import Faq from '@/pages/public/Faq';
@@ -35,12 +32,15 @@ import NotAuthorized from '@/pages/public/NotAuthorized';
 import Product from '@/pages/public/Product';
 import CustomPackage from '@/pages/public/CustomPackage';
 import Register from '@/pages/public/Register';
+import ChangePassword from '@/pages/user/ChangePassword';
+import CustomPackageMitra from '@/pages/user/CustomPackageMitra';
+import DetailProfile from '@/pages/user/DetailProfile';
+import UserProfile from '@/pages/user/UserProfile';
+import UserTransaction from '@/pages/user/UserTransaction';
+import RegisterMitra from '@/pages/user/RegisterMitra';
 
 import './index.css';
 import 'react-toastify/dist/ReactToastify.css';
-import OtherManagement from './pages/admin/OtherManagement';
-import CustomPackageMitra from './pages/user/CustomPackageMitra';
-import MitraPackageOrder from './pages/admin/MitraPackageOrder';
 
 const router = createBrowserRouter([
   {
@@ -98,11 +98,15 @@ const router = createBrowserRouter([
             path: 'daftar-mitra',
             element: <RegisterMitra />,
           },
-          {
-            path: 'transaksi',
-            element: <UserTransaction />,
-          },
         ],
+      },
+      {
+        path: '/user/transaksi',
+        element: (
+          <ProtectedRoute requiredRoles={['ADMIN', 'MITRA', 'USER']}>
+            <UserTransaction />
+          </ProtectedRoute>
+        ),
       },
       {
         path: '/paket/custom-mitra/:id',

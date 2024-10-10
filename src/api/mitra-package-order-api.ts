@@ -1,3 +1,4 @@
+import { CreateMitraPackageOrderRequest, MitraPackageOrderQueryParams } from '@/types/MitraPackageOrderType';
 import axios from 'axios';
 
 const api = axios.create({
@@ -5,7 +6,7 @@ const api = axios.create({
    withCredentials: true,
 });
 
-export const createMitraPackageOrder = async (request: any) => {
+export const createMitraPackageOrder = async (request: CreateMitraPackageOrderRequest) => {
    try {
       const response = await api.post('/', request);
       return response.data;
@@ -15,7 +16,7 @@ export const createMitraPackageOrder = async (request: any) => {
    }
 };
 
-export const getAllMitraPackageOrders = async (params: any) => {
+export const getAllMitraPackageOrders = async (params: MitraPackageOrderQueryParams) => {
    try {
       const response = await api.get('/', { params });
       return response.data;
@@ -24,6 +25,16 @@ export const getAllMitraPackageOrders = async (params: any) => {
       throw error.response.data;
    }
 };
+
+export const getAllMitraPackageOrdersByUser = async () => {
+   try {
+      const response = await api.get('/user');
+      return response.data;
+   } catch (error: any) {
+      console.error(error.response.data);
+      throw error.response.data;
+   }
+}
 
 export const deleteMitraPackageOrder = async (id: string) => {
    try {
